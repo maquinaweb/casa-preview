@@ -1,0 +1,517 @@
+/* ==========================================================================
+   casa.css — tudo que é do Casa fica aqui.
+
+   Carrega DEPOIS de desktop.css e account.css e só sobrescreve o que precisa.
+   O desktop.css original não foi tocado: a mesa, as janelas, o dock e os
+   widgets continuam sendo os mesmos do Layout Operacional.
+
+   Três blocos:
+     1. paleta — a mesma casca, em cores de casa em vez de cores de empresa
+     2. telas  — os sete aplicativos
+     3. celular — alvos de toque de 48px e o que muda abaixo de 680px
+   ========================================================================== */
+
+/* ============================================================ 1. paleta */
+:root{
+  --ink:#3b302b;
+  --casa-acento:#b06a3f;
+  --casa-acento-escuro:#96562e;
+  --casa-suave:#f3e8dd;
+  --casa-borda:#e8dcd0;
+  --casa-papel:#fdfaf6;
+  --casa-texto-fraco:#8a7666;
+  --wallpaper:radial-gradient(ellipse at 80% 80%,#c97d4a55,transparent 60%),radial-gradient(ellipse at 85% 12%,#e0a46944,transparent 52%),linear-gradient(130deg,#2b1d24 5%,#5c3a34 55%,#7d5340);
+}
+body{background:#2b1d24}
+body[data-wallpaper="oceano"]{--wallpaper:radial-gradient(ellipse at 80% 80%,#c97d4a55,transparent 60%),radial-gradient(ellipse at 85% 12%,#e0a46944,transparent 52%),linear-gradient(130deg,#2b1d24 5%,#5c3a34 55%,#7d5340)}
+body[data-wallpaper="aurora"]{--wallpaper:radial-gradient(ellipse at 20% 90%,#4a7a7288,transparent 55%),radial-gradient(ellipse at 88% 25%,#b3a45f66,transparent 50%),linear-gradient(140deg,#1e3340,#3d5f5c 55%,#6f7d4e)}
+body[data-wallpaper="grafite"]{--wallpaper:radial-gradient(ellipse at 75% 15%,#6d6a8055,transparent 55%),linear-gradient(140deg,#151824,#3c3650)}
+body[data-wallpaper="entardecer"]{--wallpaper:radial-gradient(ellipse at 90% 15%,#e8876499,transparent 58%),radial-gradient(ellipse at 10% 100%,#5c2f4e,transparent 60%),linear-gradient(140deg,#2f2a49,#8a5470)}
+
+/* janelas em papel, não em vidro azul */
+.app-window{background:var(--casa-papel);color:var(--ink);border-color:#fff8f0a8}
+.window-titlebar{background:#f5ece2;border-bottom-color:var(--casa-borda)}
+.window-title svg{color:#9a7a63}
+.window-caption{color:#a2907f}
+.small-button{background:var(--casa-acento);display:inline-flex;align-items:center;gap:7px}
+.small-button:hover{background:var(--casa-acento-escuro)}
+.small-button svg{width:16px;height:16px}
+.secondary-button{background:var(--casa-suave);color:#6d5546}
+.pill{background:var(--casa-suave);color:#95603a}
+.link-button{color:var(--casa-acento);font-weight:600}
+.section-label{color:var(--casa-texto-fraco)}
+.muted,.notice,.statusline{color:var(--casa-texto-fraco)}
+.settings-row input:checked{background:var(--casa-acento)}
+.settings-row input[type=range]{accent-color:var(--casa-acento)}
+.settings-row,.settings-foot,.upload-label{border-color:var(--casa-borda)}
+.wallpaper-choice[aria-pressed="true"] .swatch{box-shadow:0 0 0 2px var(--casa-acento)}
+.widget-footer button{color:#ffd9ab}
+.widget-task .check{border-color:#f3d6b399}
+dialog{background:var(--casa-papel);color:var(--ink);border-color:var(--casa-borda)}
+dialog input{border-color:#e0d1c2}
+.opcional{font-size:12px;color:var(--casa-texto-fraco);font-weight:400}
+.dialog-hint{font-size:12px;color:var(--casa-texto-fraco);line-height:1.5;margin:16px 0 0}
+#toast{background:#3b2a25ee;border-color:#e8c9a544}
+.avatar{background:#e6c39a;color:#4a382c}
+.brandmark{background:#f0d2ac;color:#5a3a28;font-family:Manrope,system-ui,sans-serif}
+.login-emblem{background:linear-gradient(140deg,#eec18a,#b06a3f)}
+.login-submit{background:#eecfa6;border-color:#f6ddb87a;color:#4a3324}
+.demo-chip{color:#f0cfa4}
+
+/* selo permanente de demonstração — discreto, mas nunca some */
+.demo-label{display:inline-flex!important;align-items:center;gap:6px;font-size:11px;letter-spacing:.04em;color:#f2dcc2;background:#00000026;border:1px solid #ffffff24;border-radius:20px;padding:4px 10px}
+.demo-dot{width:6px;height:6px;border-radius:50%;background:#f0b775;flex:none}
+.demo-curto{display:none}
+
+/* =============================================================== 2. telas */
+.casa-view{font-size:15px;line-height:1.5}
+.casa-view h3{font-family:Manrope,system-ui,sans-serif;font-size:15px;margin:0;font-weight:700;display:flex;align-items:center;gap:8px}
+.casa-view h3 svg{width:17px;height:17px;color:var(--casa-acento)}
+.casa-intro{font-size:13px;color:var(--casa-texto-fraco);line-height:1.55;margin:0 0 18px}
+.casa-rodape{margin:26px 0 0;padding-top:16px;border-top:1px solid var(--casa-borda);font-size:12px;color:#9b8879;line-height:1.55}
+.casa-vazio{font-size:14px;color:var(--casa-texto-fraco);padding:12px 0;margin:0}
+.so-desktop{display:inline}
+
+/* cabeçalho da tela Hoje */
+.casa-hero{margin-bottom:22px}
+.casa-eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#a89383;font-weight:650}
+.casa-hero h2{font-family:Manrope,system-ui,sans-serif;font-size:27px;letter-spacing:-.04em;margin:8px 0 6px;font-weight:700}
+.casa-hero p{margin:0;font-size:14px;color:#7d6857}
+
+/* blocos da tela Hoje */
+.casa-bloco{border:1px solid var(--casa-borda);border-radius:16px;background:#fffcf8;padding:4px 16px 10px;margin-bottom:14px}
+.casa-bloco-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 6px}
+.casa-resumo-linha{margin:4px 0 12px;font-size:14px;color:#6d5a4b}
+.casa-resumo-linha strong{font-family:Manrope,system-ui,sans-serif;font-size:18px}
+
+/* linha genérica: check + texto + quem */
+.casa-linha{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid #f0e6dc}
+.casa-bloco-head + .casa-linha,.casa-linha:first-child{border-top:0}
+.casa-linha-texto{flex:1;min-width:0}
+.casa-linha-texto strong{display:block;font-size:15px;font-weight:600;line-height:1.35}
+.casa-linha-texto strong svg{display:inline-block;width:13px;height:13px;vertical-align:-2px;margin-left:4px;color:#a98f76}
+.casa-meta{display:block;font-size:12.5px;color:var(--casa-texto-fraco);margin-top:2px}
+.casa-linha.feito .casa-linha-texto strong{color:#a6968a}
+.riscado{text-decoration:line-through;color:#a6968a;font-weight:500}
+.casa-hora{flex:none;width:58px;font-size:12.5px;font-weight:650;color:#8a6a4f;text-align:right}
+.casa-trilho{flex:none;width:3px;align-self:stretch;min-height:30px;border-radius:2px;background:#d8c3ae}
+.casa-trilho.compromisso{background:#c9848a}
+.casa-trilho.tarefa{background:#78ab90}
+.casa-trilho.conta{background:#d59a52}
+.casa-bolinha{flex:none;width:10px;height:10px;border-radius:50%;background:#cdbcad;margin:0 4px}
+.casa-bolinha.falta{background:#c96a5c}
+.casa-bolinha.pouco{background:#dda94f}
+.casa-bolinha.aviso{background:#a67cc0}
+
+/* botão de marcar — 48px de alvo, sempre */
+.casa-check{min-width:48px;min-height:48px;flex:none;display:grid;place-items:center;border:0;background:none;padding:0}
+.casa-check span{width:26px;height:26px;border-radius:9px;border:1.5px solid #cdb69f;background:#fff;display:grid;place-items:center;transition:background .15s,border-color .15s}
+.casa-check svg{width:17px;height:17px;color:transparent;stroke-width:2.6}
+.casa-check:hover span{border-color:var(--casa-acento)}
+.casa-check[aria-checked="true"] span{background:#5f9b7d;border-color:#5f9b7d}
+.casa-check[aria-checked="true"] svg{color:#fff}
+
+/* quem é o responsável */
+.casa-quem{flex:none;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:#6d5a4b;white-space:nowrap}
+.casa-inicial{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:11.5px;font-weight:750;color:#402f25;flex:none}
+.casa-inicial.agente{background:linear-gradient(150deg,#d9bb7e,#b08b56);color:#fff}
+.casa-inicial.agente svg{width:15px;height:15px}
+
+/* etiquetas */
+.casa-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.casa-chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;background:#f4ece3;color:#7e6754;border-radius:20px;padding:5px 10px;line-height:1.3}
+.casa-chip svg{width:13px;height:13px}
+.casa-chip-ok{background:#e7f1e9;color:#4d7a63}
+.casa-chip-livre{background:#f6ebdc;color:#9a6c37}
+.casa-chip-origem{background:#efe9f5;color:#6f568a}
+
+/* botão pequeno de ação */
+.casa-botao-min{flex:none;min-height:44px;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--casa-borda);background:#fff;color:#7a6252;border-radius:10px;padding:8px 13px;font-size:13px;font-weight:600}
+.casa-botao-min svg{width:14px;height:14px}
+.casa-botao-min:hover{border-color:var(--casa-acento);color:var(--casa-acento)}
+.casa-botao-min.destaque{background:var(--casa-suave);border-color:#e6d2be;color:#94592c}
+.casa-botao-min.destaque:hover{background:#ecdcca}
+
+/* cartões de tarefa e de aviso */
+.casa-cartao{border:1px solid var(--casa-borda);border-radius:14px;background:#fffcf8;padding:10px 14px 14px;margin-bottom:10px}
+.casa-cartao-topo{display:flex;align-items:center;gap:10px}
+.casa-cartao.feito{background:#faf7f3;opacity:.72}
+.casa-cartao.feito .casa-linha-texto strong{text-decoration:line-through;color:#a6968a}
+.casa-cartao .casa-chips:empty{display:none}
+.casa-checklist{list-style:none;margin:10px 0 0;padding:10px 0 0;border-top:1px solid #f0e6dc}
+.casa-checklist li{display:flex;align-items:center;gap:8px;font-size:14px;color:#5f4e42}
+.casa-checklist-conta{font-size:12px;color:var(--casa-texto-fraco);padding-left:48px}
+.casa-icone-aviso{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex:none;background:#f4ece3;color:#8a6a4f}
+.casa-icone-aviso svg{width:17px;height:17px}
+.casa-icone-aviso.despensa{background:#fbeee2;color:#b5703c}
+.casa-icone-aviso.conta{background:#f8e7e6;color:#b25a52}
+.casa-icone-aviso.tarefa{background:#e7f1e9;color:#4d7a63}
+.casa-icone-aviso.agenda{background:#efe9f5;color:#6f568a}
+.casa-cartao.aviso.lido{background:#faf8f5;opacity:.78}
+
+/* abas de Compras */
+.casa-tabs{display:flex;gap:6px;margin:0 0 18px;border-bottom:1px solid var(--casa-borda)}
+.casa-tabs button{min-height:48px;border:0;background:none;color:var(--casa-texto-fraco);font-size:14px;font-weight:600;padding:0 14px;border-bottom:2px solid transparent;margin-bottom:-1px}
+.casa-tabs button.ativa{color:var(--casa-acento);border-bottom-color:var(--casa-acento)}
+
+/* campo de digitar rápido (compras e assistente) */
+.casa-composer{display:flex;gap:8px;margin:0 0 6px}
+.casa-composer input{flex:1;min-width:0;min-height:48px;padding:12px 14px;border:1px solid #e0d1c2;border-radius:12px;background:#fff;color:var(--ink);font-size:15px}
+.casa-composer .small-button{min-height:48px;border-radius:12px;padding:0 16px}
+
+/* dias da agenda */
+.casa-dia{margin-bottom:16px}
+.casa-dia-head{display:flex;align-items:baseline;gap:10px;padding-bottom:4px;border-bottom:1px solid var(--casa-borda)}
+.casa-dia-head strong{font-family:Manrope,system-ui,sans-serif;font-size:15px}
+.casa-dia-head span{font-size:12px;color:var(--casa-texto-fraco)}
+
+/* -------------------------------------------------------------- dinheiro */
+/* Tom: mostrar, não cobrar. Nada de vermelho de alarme, nada de ranking.
+   Poucos números grandes em cima; o resto é consulta, e fica abaixo. */
+.casa-olho{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:18px;font-size:12px;color:var(--casa-texto-fraco)}
+.casa-olho button{min-height:44px;border:1px solid var(--casa-borda);background:#fff;color:#7a6252;border-radius:20px;padding:7px 15px;font-size:13px;font-weight:600}
+.casa-olho button.ativa{background:var(--casa-suave);border-color:#dcc6ae;color:#8a5730}
+
+/* os quatro números da semana */
+.casa-numeros{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+.casa-numero{border:1px solid var(--casa-borda);border-radius:16px;background:#fffcf8;padding:14px 16px}
+.casa-numero span{display:block;font-size:13px;color:var(--casa-texto-fraco);font-weight:600}
+.casa-numero strong{display:block;font-family:Manrope,system-ui,sans-serif;font-size:25px;letter-spacing:-.04em;font-weight:700;margin-top:4px;white-space:nowrap;color:#4a3c33}
+.casa-numero small{display:block;font-size:11.5px;color:var(--casa-texto-fraco);margin-top:5px;line-height:1.35}
+.casa-numero.destaque{grid-column:1 / -1;background:#f2f6f0;border-color:#dfe8da}
+.casa-numero.destaque strong{font-size:31px;color:#3f7357}
+
+/* o cadeado é pequeno de propósito */
+.casa-nota-leve{display:flex;gap:7px;align-items:flex-start;margin:0 0 18px;font-size:12px;line-height:1.5;color:#9b8879}
+.casa-nota-leve svg{width:13px;height:13px;flex:none;margin-top:2px;color:#b2a08e}
+
+.casa-valor{flex:none;font-weight:650;font-size:14px;white-space:nowrap;color:#5f4e42}
+.casa-valor.entrada{color:#4a8368}
+.casa-dia-num{flex:none;width:24px;text-align:center;font-size:12px;font-weight:700;color:#b2a08e}
+.casa-linha.mascarado .casa-linha-texto strong{color:#7f7068}
+.casa-ver-mais{display:block;margin:10px 0 4px;min-height:44px}
+
+/* lançar em três toques */
+.casa-lancar{display:grid;grid-template-columns:118px 1fr auto;gap:8px;margin-bottom:8px}
+.casa-lancar input{min-height:50px;border:1px solid #e0d1c2;border-radius:12px;background:#fff;color:var(--ink);font-size:16px;padding:10px 14px;min-width:0}
+.casa-lancar button{min-height:50px;border-radius:12px;justify-content:center}
+.casa-niveis{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:22px;font-size:12px;color:var(--casa-texto-fraco)}
+.casa-niveis button{min-height:44px;border:1px solid var(--casa-borda);background:#fff;color:#8a7666;border-radius:20px;padding:7px 13px;font-size:12.5px;font-weight:600}
+.casa-niveis button.ativa{background:var(--casa-suave);border-color:#dcc6ae;color:#8a5730}
+
+/* onde está o dinheiro: consulta rápida, não painel */
+.casa-contas{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:6px}
+.casa-conta-tile{border:1px solid var(--casa-borda);border-radius:12px;background:#fffcf8;padding:10px 12px}
+.casa-conta-tile span{display:block;font-size:12.5px;color:#6d5a4b;font-weight:600}
+.casa-conta-tile strong{display:block;font-size:16px;font-weight:700;margin-top:2px;white-space:nowrap}
+.casa-conta-tile small{display:block;font-size:11px;color:var(--casa-texto-fraco);margin-top:2px}
+
+.widget-dinheiro{display:flex;gap:16px;margin:2px 0 8px;font-size:12.5px;color:#d9ead8}
+.widget-dinheiro span{display:flex;flex-direction:column;gap:2px;opacity:.85}
+.widget-dinheiro b{font-size:14px;font-weight:700;opacity:1}
+.widget-note{font-size:12.5px;color:#d8e8ef;padding:6px 0 0;border-top:1px solid #ffffff12;margin-top:6px}
+
+/* ------------------------------------------------------------ assistente */
+.casa-bolha-nota{display:flex;gap:7px;align-items:flex-start;margin:10px 0 0;padding:9px 10px;border-radius:10px;background:#f5f1f7;border:1px solid #e6dced;font-size:12px;line-height:1.5;color:#5f5070}
+.casa-bolha-nota svg{width:13px;height:13px;flex:none;margin-top:2px;color:#8a6fa8}
+/* A conversa rola sozinha e o campo de escrever fica sempre à vista — no
+   celular, procurar o campo no fim de uma página longa mataria a demonstração. */
+.window-content:has(> #assistente){display:flex;flex-direction:column}
+#assistente{flex:1;min-height:0;display:flex;flex-direction:column}
+#assistente .panel-header,#assistente .casa-intro,#assistente .casa-sugestoes,#assistente .casa-composer,#assistente .casa-rodape{flex:none}
+.casa-conversa{flex:1;min-height:140px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--casa-borda);border-radius:16px;background:#fffcf8;padding:14px;margin-bottom:14px}
+.casa-bolha{border-radius:14px;padding:11px 13px;margin-bottom:10px;max-width:92%;font-size:14.5px}
+.casa-bolha.agente{background:#f6efe6;border:1px solid #ece0d2}
+.casa-bolha.pessoa{background:#eef3ef;border:1px solid #dfe9e2;margin-left:auto}
+.casa-bolha.proativo{background:#fbf2e2;border-color:#f0dfc2}
+.casa-bolha.cadeado{background:#f5f1f7;border-color:#e6dced}
+.casa-bolha p{margin:0;line-height:1.5}
+.casa-bolha-topo{display:flex;align-items:center;gap:7px;margin-bottom:7px;font-size:12px;color:#7d6857}
+.casa-bolha-topo b{font-weight:650}
+.casa-hora-bolha{margin-left:auto;font-size:11.5px;color:#a3907f}
+.casa-tag{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;font-weight:700;border-radius:20px;padding:3px 8px}
+.casa-tag svg{width:12px;height:12px}
+.casa-tag.proativo{background:#f2dcb4;color:#8a5d21}
+.casa-tag.cadeado{background:#e6dced;color:#6a5183}
+.casa-bolha-lista{margin:9px 0 0;padding-left:18px;font-size:13.5px;color:#61503f;line-height:1.7}
+
+/* o cartão que prova que a frase virou registro */
+.casa-registro{display:flex;align-items:center;gap:10px;margin-top:11px;padding:10px;border:1px dashed #cdb69f;border-radius:12px;background:#fff}
+.casa-registro-icone{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;flex:none;background:#f4ece3;color:#8a6a4f}
+.casa-registro-icone svg{width:16px;height:16px}
+.casa-registro div{flex:1;min-width:0}
+.casa-registro b{display:block;font-size:14px}
+.casa-registro span{font-size:12px;color:var(--casa-texto-fraco)}
+.casa-registro-ok{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#4d7a63;flex:none}
+.casa-registro-ok svg{width:13px;height:13px;stroke-width:2.6}
+
+/* o pedido de confirmação antes de apagar */
+.casa-confirmacao{margin-top:11px;padding:10px;border-radius:12px;background:#fff;border:1px solid #e8d6c4}
+.casa-confirmacao>span{display:flex;align-items:center;gap:6px;font-size:12px;color:#8a6a4f;margin-bottom:9px}
+.casa-confirmacao>span svg{width:14px;height:14px}
+.casa-confirmacao div{display:flex;gap:8px;flex-wrap:wrap}
+
+.casa-sugestoes{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.casa-sugestao{min-height:44px;border:1px dashed #d8c3ae;background:#fffdfa;color:#7a6252;border-radius:20px;padding:8px 14px;font-size:13px;text-align:left}
+.casa-sugestao:hover{border-style:solid;border-color:var(--casa-acento);color:var(--casa-acento)}
+
+/* ============================================ 2b. dois painéis e padrões */
+/* Quem decide o número de colunas é a LARGURA DA JANELA, não a da tela.
+   Assim a mesma tela serve celular fechado, celular dobrado aberto, tablet
+   de pé, tablet deitado e janela de computador — e, ao mudar de largura,
+   nada se perde, porque o estado está no JavaScript e só o CSS reflui.   */
+.window-content{container-type:inline-size}
+
+.casa-duas{display:block}
+.casa-painel-detalhe{min-width:0}
+.casa-painel-lista{min-width:0}
+.casa-voltar{display:flex;align-items:center;min-height:50px;border:0;background:none;color:var(--casa-acento);font-size:14px;font-weight:650;padding:0 2px;margin-bottom:6px}
+.casa-painel-vazio{display:none}
+
+@container (max-width:639px){
+  /* Estreito: quando há item escolhido, o detalhe toma a tela — igual
+     aplicativo de mensagem. O botão de voltar fica no canto de sempre.  */
+  .casa-duas.mestre.tem-selecao .casa-painel-lista{display:none}
+  .casa-duas.mestre:not(.tem-selecao) .casa-painel-detalhe{display:none}
+}
+@container (min-width:640px){
+  .casa-duas{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:0 26px;align-items:start}
+  .casa-painel-lista{border-right:1px solid var(--casa-borda);padding-right:24px}
+  .casa-voltar{display:none}
+  /* Nada de esconder painel quando há espaço para os dois. */
+  .casa-duas.mestre .casa-painel-lista,.casa-duas.mestre .casa-painel-detalhe{display:block}
+  /* Compras: com espaço, as abas somem e os dois lados aparecem juntos. */
+  #compras .casa-tabs{display:none}
+  #compras [data-painel]{display:block!important}
+  /* Cartões lado a lado em vez de uma coluna esticada. */
+  .casa-colunas{columns:2;column-gap:24px}
+  .casa-colunas>*{break-inside:avoid;-webkit-column-break-inside:avoid}
+  .casa-coluna-titulo{break-before:column}
+  #hoje .casa-blocos{columns:2;column-gap:20px}
+  #hoje .casa-bloco{break-inside:avoid;-webkit-column-break-inside:avoid;display:inline-block;width:100%}
+  /* Linha de texto longa cansa: limita mesmo quando sobra largura. */
+  .casa-intro,.casa-rodape,.casa-nota-leve,.casa-hero p{max-width:62ch}
+  .casa-painel-vazio{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:34px 18px;color:var(--casa-texto-fraco)}
+  .casa-painel-vazio svg{width:26px;height:26px;color:#cdb69f}
+  .casa-painel-vazio strong{font-size:15px;color:#6d5a4b}
+  .casa-painel-vazio span{font-size:13px;line-height:1.5;max-width:34ch}
+  /* Assistente: sugestões viram trilho à esquerda, conversa à direita. */
+  #assistente .casa-corpo{display:grid;grid-template-columns:208px minmax(0,1fr);
+    grid-template-areas:"lado conversa" "lado escrever";grid-template-rows:1fr auto;
+    column-gap:22px;flex:1;min-height:0}
+  #assistente .casa-conversa{grid-area:conversa;margin-bottom:12px}
+  #assistente .casa-sugestoes{grid-area:lado;flex-direction:column;align-items:stretch;margin:0}
+  #assistente .casa-composer{grid-area:escrever}
+  #assistente .casa-sugestoes-titulo{display:block}
+}
+.casa-sugestoes-titulo{display:none;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--casa-texto-fraco);font-weight:700;margin-bottom:2px}
+
+/* linha de tarefa: marcar de um lado, abrir do outro */
+.casa-linha-abrir{flex:1;min-width:0;text-align:left;border:0;background:none;padding:6px 0;color:inherit;display:block}
+.casa-linha-abrir strong{display:block;font-size:15px;font-weight:600;line-height:1.35}
+.casa-linha-tarefa{border-radius:12px;padding-left:2px;transition:background .15s}
+.casa-linha-tarefa.escolhida{background:var(--casa-suave)}
+.casa-seta{flex:none;color:#cdb69f}
+.casa-seta svg{width:16px;height:16px}
+.casa-cartao.aberto{background:#fffcf8}
+.casa-acao-larga{width:100%;margin-top:10px;justify-content:center}
+
+/* deslizar para concluir */
+[data-deslizar]{touch-action:pan-y;position:relative}
+[data-deslizar].deslizando{transition:none;background:#f6f0e8;border-radius:12px}
+[data-deslizar].vai-concluir{background:#e7f1e9}
+[data-deslizar].vai-concluir:before{content:'concluir';position:absolute;left:-58px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:#4d7a63;text-transform:uppercase;letter-spacing:.05em}
+
+/* tela vazia que ensina */
+.casa-vazio{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:20px 2px;margin:0;font-size:14px}
+.casa-vazio svg{width:24px;height:24px;color:#cfbcab}
+.casa-vazio strong{font-size:15px;font-weight:650;color:#6d5a4b}
+.casa-vazio span{font-size:13px;line-height:1.5;color:var(--casa-texto-fraco);max-width:42ch}
+.casa-dia-livre{margin:6px 0 0;font-size:12.5px;color:#b2a08e}
+
+/* contador, como em qualquer aplicativo de celular */
+.app-badge{position:absolute;top:-3px;right:6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#c9605a;color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center;box-shadow:0 0 0 2px #ffffff30}
+.casa-badge{display:inline-block;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#c9605a;color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center;margin-left:2px}
+
+/* botão flutuante de adicionar — some no computador, onde já existe o botão
+   no cabeçalho da tela. Fica à direita, longe da dobra do aparelho.      */
+.casa-fab{display:none}
+@media(max-width:1180px){
+  .casa-fab{position:fixed;right:16px;bottom:78px;z-index:40;display:inline-flex;align-items:center;gap:8px;
+    min-height:56px;padding:0 20px;border:0;border-radius:28px;background:var(--casa-acento);color:#fff;
+    font-size:15px;font-weight:650;box-shadow:0 8px 22px #5a3a2840}
+  .casa-fab svg{width:20px;height:20px;stroke-width:2.2}
+  .casa-fab:active{background:var(--casa-acento-escuro)}
+}
+
+/* --------------------------------------------- dedo, até 1180px --------
+   Vale para celular E para tablet/dobrável: o alvo mínimo não muda porque a
+   tela cresceu. Antes isso vivia só no bloco de 680px, e o tablet — que é
+   toque — ficava com alvo de mouse.                                       */
+@media(max-width:1180px){
+  .casa-check{min-width:50px;min-height:50px}
+  .casa-linha-abrir{min-height:50px;display:flex;flex-direction:column;justify-content:center}
+  .casa-botao-min{min-height:50px;min-width:50px;justify-content:center}
+  .link-button,.casa-ver-mais{min-height:50px;min-width:50px;padding:0 2px}
+  .casa-sugestao,.casa-tabs button,.casa-olho button,.casa-niveis button{min-height:50px}
+  .casa-lancar input,.casa-lancar button{min-height:50px}
+  .casa-composer input,.casa-composer .small-button{min-height:50px}
+  .small-button,.secondary-button{min-height:50px}
+  dialog input{min-height:50px}
+  .customize{min-height:50px}
+  /* barra de cima: ícone pequeno, alvo grande */
+  .menubar .wordmark,.menu-button,.menubar .avatar{position:relative}
+  .menubar .wordmark:after,.menu-button:after,.menubar .avatar:after{content:'';position:absolute;
+    top:50%;left:50%;width:50px;height:50px;transform:translate(-50%,-50%)}
+  .menubar .avatar{width:30px;height:30px}
+  .menu-button svg{width:21px;height:21px}
+  /* cartões da tela inicial */
+  .widget-task{padding:0;min-height:50px}
+  .widget-task .check{width:26px;height:26px;border-radius:9px;position:relative}
+  .widget-task .check:after{content:'';position:absolute;inset:-12px}
+  .widget-footer{margin-top:14px;min-height:50px;align-items:center}
+  .widget-footer button{min-height:50px;min-width:50px;padding:0 2px}
+  .widget-remove{width:26px;height:26px;position:relative}
+  .widget-remove:after{content:'';position:absolute;inset:-12px}
+  /* janela: botões pequenos, alvo de 48 */
+  .window-controls button{position:relative}
+  .window-controls button:after{content:'';position:absolute;inset:-15px}
+}
+
+/* ================================================ 3. toque com tela grande */
+/* 681–1180px: celular dobrável aberto e tablet. Tem espaço, não tem mouse. */
+@media(min-width:681px) and (max-width:1180px){
+  .app-window,.app-window.maximized{inset:8px!important;width:calc(100% - 16px)!important;
+    height:calc(100% - 16px)!important;min-width:0;min-height:0;border-radius:16px}
+  .window-titlebar{cursor:default}
+  .window-resize{display:none}
+  .window-controls button{width:20px;height:20px;position:relative}
+  .window-controls button:after{content:'';position:absolute;inset:-14px}
+  .window-controls{gap:16px}
+  .window-content{padding:20px 22px 28px}
+  #windows{inset:48px 0 72px}
+  #desktop{inset:48px 0 78px;padding:26px 24px 40px}
+  .desktop-greeting{position:static;margin-bottom:20px}
+  .desktop-shortcuts{position:static;display:grid;grid-template-columns:repeat(7,1fr);gap:16px 10px;margin:0 0 26px}
+  .desktop-shortcuts .app-button{width:auto}
+  #widgets{position:static;display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .widget{position:relative!important;top:auto!important;left:auto!important;width:auto!important}
+  .widget-head{cursor:default}
+  .widget-handle{display:none}
+  .customize{position:static;margin-top:18px}
+  .casa-fab{bottom:88px}
+}
+
+/* barra de abas embaixo, com ícone E rótulo: vale para celular e tablet.
+   O dock que amplia no ponteiro só existe acima de 1180px.               */
+@media(max-width:1180px){
+  .dock-zone{bottom:0;left:0;right:0;transform:none;padding:0;max-width:none;width:100%}
+  .dock{width:100%;display:flex;justify-content:space-around;align-items:stretch;gap:0;
+    border-radius:0;border-left:0;border-right:0;border-bottom:0;padding:4px 4px 4px;
+    background:#2b1d24e8;backdrop-filter:blur(24px);box-shadow:0 -6px 24px #0000002e}
+  .dock [data-app="inicio"],.dock [data-app="agenda"],.dock [data-app="avisos"],
+  .dock [data-app="ajustes"],.dock-divider{display:none}
+  .dock .app-button{flex:1;width:auto;min-width:0;height:58px;justify-content:center;gap:3px;
+    transform:none!important;padding:0 2px}
+  .dock .app-icon{width:26px;height:26px;border-radius:9px;transform:none!important;box-shadow:none}
+  .dock .app-icon svg{width:16px;height:16px}
+  .dock .app-label{position:static;display:block;opacity:1;background:none;border:0;padding:0;
+    font-size:10.5px;font-weight:600;color:#e8d5c2;white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis;max-width:100%}
+  .dock .app-button.active .app-label{color:#fff}
+  .dock .app-button:after{display:none}
+  .dock .app-button.active .app-icon{box-shadow:0 0 0 2px #ffffff5c}
+}
+
+/* ============================================================= 3. celular */
+/* Abaixo de 680px o desktop.css já desmonta a metáfora de mesa. Aqui só
+   garantimos dedo em vez de mouse: nada de alvo menor que 48px.          */
+@media(max-width:680px){
+  .demo-full{display:none}
+  .demo-curto{display:inline}
+  .demo-label{padding:3px 8px;font-size:10px}
+  .menubar{gap:8px;padding:0 12px}
+
+  /* A barra de abas de baixo vale até 1180px. Aqui só o rótulo, que
+     encurta para as cinco abas caberem em 320px.                      */
+  .dock .app-label{font-size:10px}
+
+  /* dinheiro */
+  .casa-olho button,.casa-niveis button,.casa-ver-mais{min-height:50px}
+  .casa-numero{padding:12px 14px}
+  .casa-numero strong{font-size:23px}
+  .casa-numero.destaque strong{font-size:29px}
+  .casa-lancar{grid-template-columns:1fr auto}
+  .casa-lancar button{min-width:52px}
+  .casa-lancar #lancDesc{grid-column:1 / -1;order:-1}
+  .casa-contas{grid-template-columns:1fr}
+  .casa-conta-tile{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .casa-conta-tile strong{margin-top:0}
+  .casa-conta-tile small{flex-basis:100%;margin-top:0}
+  #desktop{inset:48px 0 72px}
+  #windows{inset:48px 0 70px}
+
+  /* botões da janela: visual pequeno, alvo de 48 */
+  .window-controls{gap:16px}
+  .window-controls button{width:18px;height:18px;position:relative}
+  .window-controls button:after{content:'';position:absolute;inset:-15px}
+
+  /* atalhos da tela inicial */
+  .desktop-shortcuts{gap:18px 6px}
+  .desktop-shortcuts .app-icon{width:56px;height:56px}
+  .desktop-shortcuts .app-label{font-size:11.5px}
+
+  /* barra de cima: ícone pequeno, alvo grande */
+  .menubar .wordmark,.menu-button,.menubar .avatar{position:relative}
+  .menubar .wordmark:after,.menu-button:after,.menubar .avatar:after{content:'';position:absolute;top:50%;left:50%;width:50px;height:50px;transform:translate(-50%,-50%)}
+  .menubar .avatar{width:30px;height:30px}
+  .menu-button svg{width:21px;height:21px}
+
+  /* cartões do resumo: o que a pessoa vê primeiro */
+  .widget{border-radius:18px}
+  .widget-task{padding:0;min-height:50px}
+  .widget-task .check{width:26px;height:26px;border-radius:9px;position:relative}
+  .widget-task .check:after{content:'';position:absolute;inset:-11px}
+  .widget-footer{margin-top:14px;min-height:50px;align-items:center}
+  .widget-footer button{min-height:50px;min-width:50px;padding:0 2px}
+  .widget-remove{width:26px;height:26px;position:relative}
+  .widget-remove:after{content:'';position:absolute;inset:-11px}
+  .customize{min-height:50px}
+
+  /* telas */
+  .window-content{padding:16px 15px 24px}
+  .casa-hero h2{font-size:23px}
+  .casa-bloco{padding:2px 13px 8px;border-radius:14px}
+  .casa-linha{padding:6px 0;gap:8px}
+  .casa-linha-texto strong{font-size:15px}
+  .casa-hora{width:50px;font-size:12px}
+  .casa-check{min-width:50px;min-height:50px}
+  .casa-botao-min{min-height:50px;min-width:50px;justify-content:center;padding:8px 14px}
+  .casa-sugestao{min-height:50px}
+  .link-button{min-height:50px;min-width:50px;padding:0 2px}
+  .casa-tabs{gap:2px}
+  .casa-tabs button{flex:1;min-height:50px;padding:0 6px;font-size:13.5px}
+  .casa-composer .small-button{min-width:52px;padding:0 14px;justify-content:center}
+  .so-desktop{display:none}
+  .casa-bolha{max-width:100%}
+  .casa-quem{gap:5px}
+  .casa-quem .casa-inicial{width:30px;height:30px}
+  .panel-header{flex-wrap:wrap;margin-bottom:16px}
+  .casa-checklist-conta{padding-left:0}
+  dialog label{margin-top:16px}
+  dialog input{min-height:50px}
+  .small-button,.secondary-button{min-height:50px}
+}
+
+/* telas bem estreitas */
+@media(max-width:360px){
+  .dock .app-label{font-size:9.5px}
+  .dock .app-icon{width:24px;height:24px}
+  .casa-lancar{grid-template-columns:1fr}
+  .casa-lancar input,.casa-lancar button{grid-column:1 / -1}
+  /* em tela de 320px o número grande não cabe ao lado do rótulo */
+  .casa-numeros{grid-template-columns:1fr}
+  .casa-numero{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .casa-numero strong{margin-top:0}
+  .casa-numero small{flex-basis:100%;margin-top:2px}
+}

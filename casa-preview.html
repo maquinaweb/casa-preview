@@ -1,0 +1,71 @@
+<!doctype html><html lang="pt-BR"><head>
+<meta name="robots" content="noindex, nofollow, noarchive, noimageindex"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Casa · protótipo</title><meta name="description" content="Protótipo navegável do sistema Casa. Dados fictícios.">
+<meta name="theme-color" content="#2b1d24">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232b1d24'/%3E%3Cpath d='M12 31 32 14l20 17v18a3 3 0 0 1-3 3H15a3 3 0 0 1-3-3Z' fill='none' stroke='%23e0a469' stroke-width='5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="desktop.css"><link rel="stylesheet" href="account.css"><link rel="stylesheet" href="casa.css"></head>
+<body data-wallpaper="oceano">
+<div class="wallpaper" aria-hidden="true"></div>
+
+<section class="login-screen" id="loginScreen" aria-labelledby="loginTitle">
+  <div class="login-brand wordmark"><span class="brandmark" aria-hidden="true">⌂</span><strong>casa</strong><span class="os">demo</span></div>
+  <div class="login-center">
+    <div class="login-card">
+      <span class="login-emblem" aria-hidden="true"><span data-icon="casa"></span></span>
+      <span class="login-eyebrow">A CASA ORGANIZADA NUM LUGAR SÓ</span>
+      <h1 id="loginTitle">Entre em casa.</h1>
+      <p class="login-subtitle" id="loginSubtitle">Veja o que a família combinou para hoje.</p>
+      <form id="loginForm" onsubmit="enterDesktop(event)" novalidate autocomplete="off">
+        <label for="loginEmail">E-mail</label>
+        <div class="login-input"><span data-icon="mail"></span><input id="loginEmail" type="email" placeholder="seu@email.com" autocomplete="off" aria-describedby="loginHint"></div>
+        <label for="loginPassword">Senha</label>
+        <div class="login-input"><span data-icon="lock"></span><input id="loginPassword" type="password" placeholder="Sua senha" autocomplete="off" aria-describedby="loginHint"></div>
+        <button class="login-submit" type="submit">Entrar <span data-icon="arrow"></span></button>
+      </form>
+      <p class="login-hint" id="loginHint"><span class="demo-chip">DEMONSTRAÇÃO</span> Não há login de verdade. Clique em Entrar.</p>
+    </div>
+    <p class="login-footer">Protótipo do sistema Casa <span>·</span> dados fictícios <span>·</span> nada é salvo fora deste navegador</p>
+  </div>
+</section>
+
+<div id="desktopShell" inert aria-hidden="true">
+<header class="menubar">
+  <button class="wordmark" onclick="showDesktop()" aria-label="Mostrar a tela inicial"><span class="brandmark" aria-hidden="true">⌂</span><strong>casa</strong></button>
+  <span class="menubar-app" id="activeApp">Início</span>
+  <div class="menubar-right">
+    <span class="demo-label" title="Protótipo de conversa. Todos os dados são inventados."><span class="demo-dot" aria-hidden="true"></span><span class="demo-full">Protótipo · dados fictícios</span><span class="demo-curto">DEMO</span></span>
+    <button class="menu-button" onclick="openApp('ajustes')" aria-label="Ajustes da casa" title="Ajustes da casa"><span data-icon="sliders"></span></button>
+    <time id="topClock"></time>
+    <button type="button" class="avatar" id="userMenu" onclick="openApp('perfil')" aria-label="Meu perfil" title="Meu perfil">P</button>
+  </div>
+</header>
+
+<main id="desktop" aria-label="Tela inicial">
+  <div class="desktop-greeting"><span id="desktopEyebrow">CASA</span><h1 id="desktopTitle">Início</h1><p id="longDate"></p></div>
+  <section id="widgets" aria-label="Resumo da casa"></section>
+  <nav class="desktop-shortcuts" id="desktopApps" aria-label="Aplicativos"></nav>
+  <button class="customize" onclick="openApp('ajustes')"><span data-icon="sliders"></span>Ajustar a tela inicial</button>
+</main>
+
+<div id="windows" aria-label="Janelas de aplicativos"></div>
+<div class="dock-zone" id="dockZone"><nav class="dock" id="dock" aria-label="Aplicativos da casa"></nav></div>
+
+<!-- As telas dos seis aplicativos são montadas aqui por casa-apps.js e assistente.js. -->
+<div id="appStorage" hidden></div>
+
+<dialog id="taskDialog"><form onsubmit="criarTarefa(event)">
+  <header><h2>Nova tarefa</h2><button type="button" class="icon-button" aria-label="Fechar" onclick="document.getElementById('taskDialog').close()">×</button></header>
+  <label>O que precisa ser feito?<input id="taskName" required maxlength="120" placeholder="Ex.: trocar a pilha do controle"></label>
+  <label>Prazo <span class="opcional">opcional</span><input id="taskDue" maxlength="40" placeholder="Hoje, sábado, dia 10..."></label>
+  <p class="dialog-hint">Só o título é obrigatório. Responsável, repetição e checklist ficam para depois — ou para nunca.</p>
+  <footer><button type="button" class="secondary-button" onclick="document.getElementById('taskDialog').close()">Cancelar</button><button class="small-button">Criar tarefa</button></footer>
+</form></dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script src="dados-exemplo.js"></script>
+<script src="desktop.js"></script>
+<script src="casa-apps.js"></script>
+<script src="assistente.js"></script>
+<script src="account.js"></script>
+</body></html>
