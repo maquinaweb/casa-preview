@@ -1,6 +1,6 @@
 'use strict';
 /* ==========================================================================
-   casa-apps.js — seis das sete telas do Casa. A sétima, o Assistente,
+   casa-apps.js — oito das nove telas do Casa. A nona, o Assistente,
    está em assistente.js.
 
    Tudo aqui lê de `dadosExemplo` (dados-exemplo.js). Nenhum nome de pessoa
@@ -57,7 +57,7 @@ function voltar(tela,rotulo){
 
 // O que está selecionado em cada tela. Sobrevive a dobrar, girar e
 // redimensionar, porque é estado de JavaScript e não depende do layout.
-const selecao = { tarefas:null };
+const selecao = { tarefas:null, documentos:null, viagens:null };
 
 /* ---------------------------------------------------------------- HOJE  */
 // A tela mais importante. Poucos blocos, cada um com nome — a pessoa segura
@@ -417,7 +417,7 @@ function telaAvisos(){
   const cartao = a=>`
     <article class="casa-cartao aviso ${a.lido?'lido':''}">
       <div class="casa-cartao-topo">
-        <span class="casa-icone-aviso ${esc(a.tipo)}" aria-hidden="true">${svg({despensa:'box',conta:'wallet',tarefa:'tasks',agenda:'calendar'}[a.tipo]||'bell')}</span>
+        <span class="casa-icone-aviso ${esc(a.tipo)}" aria-hidden="true">${svg({despensa:'box',conta:'wallet',tarefa:'tasks',agenda:'calendar',documento:'doc'}[a.tipo]||'bell')}</span>
         <div class="casa-linha-texto">
           <strong>${esc(a.titulo)}</strong>
           <span class="casa-meta">${esc(a.detalhe)}</span>
@@ -440,7 +440,260 @@ function telaAvisos(){
   Cada pessoa escolhe onde recebe e com quanta antecedência — nesta demonstração isso é só um desenho.</p>`;
 }
 
+/* ---------------------------------------------------------- DOCUMENTOS  */
+// Busca em cima, porque ninguém navega pasta — todo mundo procura.
+// Validade é o que faz o módulo valer: documento que vence e ninguém lembra.
+let buscaDoc = '';
+const ROTULO_TIPO = { pdf:'PDF', foto:'Foto', planilha:'Planilha' };
+
+function docsVisiveis(){
+  return dadosExemplo.documentos.filter(d=>nivelDeAcesso(d,verComo)!=='nada');
+}
+function docsFiltrados(){
+  const termo = buscaDoc.trim().toLocaleLowerCase('pt-BR');
+  if(!termo) return docsVisiveis();
+  return docsVisiveis().filter(d=>d.nome.toLocaleLowerCase('pt-BR').includes(termo)
+    || (ROTULO_TIPO[d.tipo]||'').toLocaleLowerCase('pt-BR').includes(termo)
+    || nomeDe(d.quem).toLocaleLowerCase('pt-BR').includes(termo));
+}
+function docsQueVencem(){
+  return docsVisiveis().filter(d=>d.venceEmDias!=null).sort((a,b)=>a.venceEmDias-b.venceEmDias);
+}
+function linhaDocumento(d){
+  const soNome = nivelDeAcesso(d,verComo)==='valor';   // vê que existe, não abre
+  const proprio = d.quem===verComo;
+  const cadeado = soNome || (proprio && d.visibilidade!=='aberto');
+  return `
+  <div class="casa-linha ${selecao.documentos===d.id?'escolhida':''}">
+    <span class="casa-tipo ${esc(d.tipo)}" aria-hidden="true">${svg(d.tipo==='foto'?'grid':d.tipo==='planilha'?'finance':'doc')}</span>
+    <button class="casa-linha-abrir" onclick="selecionarDoc('${d.id}')">
+      <strong>${esc(d.nome)}${cadeado?svg('lock'):''}</strong>
+      <span class="casa-meta">${esc(ROTULO_TIPO[d.tipo]||d.tipo)} · ${d.quem==='casa'?'da casa':esc(nomeDe(d.quem))} · ${esc(d.data)}</span>
+    </button>
+    ${d.venceEmDias!=null?chip('vence em '+d.venceEmDias+' dias','casa-chip-vence'):''}
+  </div>`;
+}
+function detalheDocumento(d){
+  if(!d) return `<div class="casa-painel-vazio">${svg('doc')}<strong>Escolha um documento</strong><span>Toque em qualquer arquivo da lista para ver os detalhes aqui.</span></div>`;
+  const soNome = nivelDeAcesso(d,verComo)==='valor';
+  const proprio = d.quem===verComo;
+  const outro = oOutroAdulto(verComo);
+  return `
+  ${voltar('documentos','Todos os documentos')}
+  <article class="casa-cartao aberto">
+    <div class="casa-cartao-topo">
+      <span class="casa-tipo grande ${esc(d.tipo)}" aria-hidden="true">${svg(d.tipo==='foto'?'grid':d.tipo==='planilha'?'finance':'doc')}</span>
+      <div class="casa-linha-texto">
+        <strong>${esc(d.nome)}</strong>
+        <span class="casa-meta">${esc(ROTULO_TIPO[d.tipo]||d.tipo)} · ${esc(d.tamanho)} · guardado em ${esc(d.data)}</span>
+      </div>
+    </div>
+    <div class="casa-chips">
+      ${d.quem==='casa'?chip('da casa','casa-chip-ok'):quemChip(d.quem)}
+      ${d.venceEmDias!=null?chip('vence em '+d.venceEmDias+' dias','casa-chip-vence'):chip('sem validade','')}
+      ${d.visibilidade==='aberto'?chip('a casa toda vê','casa-vis-aberto')
+        :d.visibilidade==='total'
+          ? `<span class="casa-chip casa-vis-total">${svg('lock')}${proprio?`${outro?outro.nome:'a outra pessoa'} vê o nome, não abre`:'você vê o nome, não abre'}</span>`
+          : `<span class="casa-chip casa-vis-privado">${svg('lock')}só ${proprio?'você':esc(nomeDe(d.quem))}</span>`}
+    </div>
+    ${d.venceEmDias!=null?`<p class="casa-nota-leve">${svg('bell')}<span>Faltando ${d.venceEmDias} dias, a casa já foi avisada. O aviso nasce da data, não de alguém lembrar.</span></p>`:''}
+    ${soNome
+      ? `<p class="casa-dica">${esc(nomeDe(d.quem))} guardou este arquivo como "só o nome". Você sabe que ele existe; abrir, não.</p>`
+      : `<button class="casa-botao-min destaque casa-acao-larga" onclick="notify('Protótipo: nenhum arquivo de verdade para abrir.')">${svg('arrow')}Abrir arquivo</button>`}
+  </article>`;
+}
+function telaDocumentos(){
+  const lista = docsFiltrados();
+  const vencendo = docsQueVencem();
+  const atual = dadosExemplo.documentos.find(d=>d.id===selecao.documentos&&nivelDeAcesso(d,verComo)!=='nada') || lista[0] || null;
+
+  const esquerda = `
+  <div class="casa-busca">
+    ${svg('search')}
+    <input id="buscaDoc" type="search" value="${esc(buscaDoc)}" placeholder="Procurar documento"
+      aria-label="Procurar documento" autocomplete="off" oninput="filtrarDocumentos(this.value)">
+    ${buscaDoc?`<button class="casa-limpar" onclick="filtrarDocumentos('')" aria-label="Limpar busca">×</button>`:''}
+  </div>
+  ${!buscaDoc&&vencendo.length?`<div class="section-label">Vence em breve</div>${vencendo.map(linhaDocumento).join('')}`:''}
+  <div class="section-label">${buscaDoc?`${lista.length} ${lista.length===1?'resultado':'resultados'}`:'Todos os documentos'}</div>
+  ${lista.length?lista.map(linhaDocumento).join('')
+    :vazio('Nada com esse nome.','Procure por parte do nome, pelo tipo ("PDF", "foto") ou por quem guardou.','search')}`;
+
+  return `
+  <div class="panel-header"><h2>Documentos</h2><span class="pill">${docsVisiveis().length} arquivos</span></div>
+  ${duasColunas(esquerda,detalheDocumento(atual),true,selecao.documentos!==null)}
+  <p class="casa-rodape">Protótipo: os arquivos não existem de verdade. O que está aqui é a ideia —
+  achar pela busca e ser avisado antes de vencer.</p>
+  ${fab('Guardar arquivo',"notify('Protótipo: guardar arquivo de verdade fica para o sistema.')")}`;
+}
+
+/* ------------------------------------------------------------- VIAGENS  */
+// A mecânica que o dono descreveu: a viagem tem dois momentos do mesmo
+// conteúdo. Planejando, é vontade solta. Quando acontece, o que foi acordado
+// VIRA ROTEIRO — e cada item do roteiro lembra de quem foi a ideia.
+const QUEREM = { vamos:{rotulo:'vamos', classe:'casa-vis-aberto'},
+                 talvez:{rotulo:'talvez', classe:'casa-chip-livre'},
+                 nao:{rotulo:'fica para a próxima', classe:''} };
+
+function cartaoViagem(v){
+  const escolhida = selecao.viagens===v.id;
+  const vamos = v.lugares.filter(l=>l.querem==='vamos').length;
+  return `
+  <div class="casa-linha ${escolhida?'escolhida':''}">
+    <span class="casa-tipo ${v.estado==='acontecendo'?'agora':''}" aria-hidden="true">${svg('plane')}</span>
+    <button class="casa-linha-abrir" onclick="selecionarViagem('${v.id}')">
+      <strong>${esc(v.nome)}</strong>
+      <span class="casa-meta">${esc(v.quando)} · ${vamos} ${vamos===1?'lugar combinado':'lugares combinados'}</span>
+    </button>
+    ${v.estado==='acontecendo'?chip('acontecendo','casa-chip-agora'):chip('planejando','casa-chip-livre')}
+  </div>`;
+}
+function blocoParticipantes(v){
+  return `
+  <div class="casa-chips">
+    ${v.participantes.map(id=>quemChip(id)).join('')}
+    ${v.convidados.map(c=>`<span class="casa-chip casa-chip-convidado">${svg('lock')}${esc(c.nome)} · convidada · ${esc(c.acesso)}</span>`).join('')}
+  </div>
+  ${v.convidados.length?`<p class="casa-dica">${svg('lock')} Convidado vê só esta viagem, e só ${esc(v.convidados[0].ate)}. O resto da casa continua fechado para ele.</p>`:''}`;
+}
+function blocoLugares(v,titulo){
+  const ordem = ['vamos','talvez','nao'];
+  return `<div class="section-label">${titulo}</div>
+  ${ordem.map(q=>{
+    const desses = v.lugares.filter(l=>l.querem===q);
+    if(!desses.length) return '';
+    return desses.map(l=>`
+      <div class="casa-linha">
+        <span class="casa-bolinha ${q==='vamos'?'ok':q==='talvez'?'pouco':''}" aria-hidden="true"></span>
+        <div class="casa-linha-texto"><strong class="${q==='nao'?'riscado':''}">${esc(l.nome)}</strong>
+          <span class="casa-meta">ideia ${esc(nomeDe(l.quemSugeriu))}</span></div>
+        <button class="casa-botao-min ${q==='vamos'?'destaque':''}" onclick="alternarLugar('${v.id}','${l.id}')">${esc(QUEREM[q].rotulo)}</button>
+      </div>`).join('');
+  }).join('')}`;
+}
+function blocoReservas(v){
+  return `<div class="section-label">Reservas e passagens</div>
+  ${v.reservas.map((res,i)=>`
+    <div class="casa-linha">
+      ${botaoCheck(res.feito,(res.feito?'Desmarcar ':'Marcar ')+res.nome,`alternarReserva('${v.id}',${i})`)}
+      <div class="casa-linha-texto"><strong class="${res.feito?'':''}">${esc(res.nome)}</strong>
+        <span class="casa-meta">${esc(res.tipo)}${res.feito?' · confirmado':' · ainda falta'}</span></div>
+      ${res.anexo?chip(res.anexo,'casa-chip-anexo'):''}
+    </div>`).join('')}`;
+}
+function blocoPreparacao(v){
+  if(!v.preparacao.length) return '';
+  return `<div class="section-label">Antes de sair</div>
+  ${v.preparacao.map((t,i)=>`
+    <div class="casa-linha">
+      ${botaoCheck(t.ok,(t.ok?'Desmarcar ':'Marcar ')+t.texto,`alternarPreparo('${v.id}',${i})`)}
+      <div class="casa-linha-texto"><strong class="${t.ok?'riscado':''}">${esc(t.texto)}</strong></div>
+    </div>`).join('')}`;
+}
+function blocoDespesas(v){
+  const total = v.despesas.reduce((s,d)=>s+d.valor,0);
+  return `<div class="section-label">Quanto já saiu</div>
+  ${v.despesas.length?`
+    ${v.despesas.map(d=>`
+      <div class="casa-linha">
+        <div class="casa-linha-texto"><strong>${esc(d.oque)}</strong><span class="casa-meta">${esc(nomeDe(d.quem))}</span></div>
+        <span class="casa-valor">${brl(d.valor)}</span>
+      </div>`).join('')}
+    <p class="casa-resumo-linha"><strong>${brl(total)}</strong> de ${brl(v.orcamento)} que a casa separou</p>`
+   :`<p class="casa-resumo-linha">Nada gasto ainda. A casa separou <strong>${brl(v.orcamento)}</strong>.</p>`}`;
+}
+function detalheViagem(v){
+  if(!v) return `<div class="casa-painel-vazio">${svg('plane')}<strong>Escolha uma viagem</strong><span>Toque numa viagem da lista para ver o plano ou o roteiro.</span></div>`;
+  const cabecalho = `
+    ${voltar('viagens','Todas as viagens')}
+    <header class="casa-hero pequeno">
+      <span class="casa-eyebrow">${v.estado==='acontecendo'?'acontecendo agora':'ainda planejando'}</span>
+      <h2>${esc(v.nome)}</h2>
+      <p>${esc(v.quando)}</p>
+    </header>
+    ${blocoParticipantes(v)}`;
+
+  if(v.estado==='acontecendo'){
+    const hoje = v.roteiro.find(d=>d.dia==='Hoje');
+    return `${cabecalho}
+    <p class="casa-nota-leve">${svg('check')}<span>O que a família combinou virou este roteiro. Nada do plano foi jogado fora — ele virou hora e ordem.</span></p>
+    ${v.roteiro.map(d=>`
+      <div class="section-label">${esc(d.dia)}</div>
+      ${d.itens.map(i=>{
+        const origem = i.veioDe ? v.lugares.find(l=>l.id===i.veioDe) : null;
+        return `
+        <div class="casa-linha ${d.dia==='Hoje'?'':'passado'}">
+          <span class="casa-hora">${esc(i.hora)}</span>
+          <span class="casa-trilho compromisso" aria-hidden="true"></span>
+          <div class="casa-linha-texto"><strong>${esc(i.titulo)}</strong>
+            ${origem?`<span class="casa-meta">${svg('spark')}veio da ideia ${esc(nomeDe(origem.quemSugeriu))}, lá no plano</span>`
+                     :`<span class="casa-meta">do roteiro</span>`}</div>
+        </div>`;}).join('')}`).join('')}
+    ${blocoDespesas(v)}
+    ${blocoReservas(v)}`;
+  }
+
+  return `${cabecalho}
+  <p class="casa-nota-leve">${svg('spark')}<span>Fase de juntar vontade: cada um joga o que quer conhecer. Quando a viagem chegar, o que ficou em "vamos" vira o roteiro do dia.</span></p>
+  ${blocoLugares(v,'Lugares que alguém quis')}
+  ${blocoReservas(v)}
+  ${blocoPreparacao(v)}
+  ${blocoDespesas(v)}`;
+}
+function telaViagens(){
+  const lista = dadosExemplo.viagens;
+  const atual = lista.find(v=>v.id===selecao.viagens) || lista[0] || null;
+  const esquerda = lista.length
+    ? lista.map(cartaoViagem).join('')
+    : vazio('Nenhuma viagem ainda.','Comece jogando aqui os lugares que alguém quer conhecer. Vira roteiro quando a viagem chegar.','plane');
+  return `
+  <div class="panel-header"><h2>Viagens</h2><span class="pill">${lista.length} ${lista.length===1?'viagem':'viagens'}</span></div>
+  ${duasColunas(esquerda,detalheViagem(atual),true,selecao.viagens!==null)}
+  ${fab('Nova viagem',"notify('Protótipo: criar viagem fica para o sistema.')")}`;
+}
+
 /* ------------------------------------------------------------- ações   */
+function filtrarDocumentos(termo){
+  buscaDoc = termo;
+  selecao.documentos = null;
+  redesenhar('documentos');
+  // Redesenhar troca o campo: devolve o foco e o cursor no fim, senão
+  // a pessoa perde a digitação no segundo caractere.
+  const campo = $('#buscaDoc');
+  if(campo){campo.focus();campo.setSelectionRange(campo.value.length,campo.value.length);}
+}
+function selecionarDoc(id){
+  selecao.documentos = id;
+  redesenhar('documentos');
+  document.getElementById('documentos')?.closest('.window-content')?.scrollTo({top:0});
+}
+function selecionarViagem(id){
+  selecao.viagens = id;
+  redesenhar('viagens');
+  document.getElementById('viagens')?.closest('.window-content')?.scrollTo({top:0});
+}
+function alternarLugar(idViagem,idLugar){
+  const v = dadosExemplo.viagens.find(v=>v.id===idViagem);
+  const l = v?.lugares.find(l=>l.id===idLugar);
+  if(!l) return;
+  const ordem = ['vamos','talvez','nao'];
+  l.querem = ordem[(ordem.indexOf(l.querem)+1)%ordem.length];
+  notify(`${l.nome}: ${QUEREM[l.querem].rotulo}.`);
+  redesenhar('viagens');
+}
+function alternarReserva(idViagem,i){
+  const v = dadosExemplo.viagens.find(v=>v.id===idViagem);
+  if(!v||!v.reservas[i]) return;
+  v.reservas[i].feito = !v.reservas[i].feito;
+  redesenhar('viagens');
+}
+function alternarPreparo(idViagem,i){
+  const v = dadosExemplo.viagens.find(v=>v.id===idViagem);
+  if(!v||!v.preparacao[i]) return;
+  v.preparacao[i].ok = !v.preparacao[i].ok;
+  redesenhar('viagens');
+}
+
 function naListaDeCompras(nome){
   return dadosExemplo.listaAtiva.itens.some(i=>i.nome.toLocaleLowerCase('pt-BR')===String(nome).toLocaleLowerCase('pt-BR'));
 }
@@ -640,7 +893,8 @@ function ligarDeslizar(){
 }
 
 /* ------------------------------------------------------- montar/atualizar */
-const telas = {hoje:telaHoje, dinheiro:telaDinheiro, tarefas:telaTarefas, compras:telaCompras, agenda:telaAgenda, avisos:telaAvisos};
+const telas = {hoje:telaHoje, dinheiro:telaDinheiro, tarefas:telaTarefas, compras:telaCompras,
+               agenda:telaAgenda, avisos:telaAvisos, documentos:telaDocumentos, viagens:telaViagens};
 
 function redesenhar(id){
   const alvo = document.getElementById(id);

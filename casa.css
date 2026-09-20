@@ -344,6 +344,36 @@ dialog input{border-color:#e0d1c2}
   .casa-fab:active{background:var(--casa-acento-escuro)}
 }
 
+/* ------------------------------------------------ documentos e viagens */
+/* Busca no topo: é o gesto principal de Documentos, não um filtro escondido. */
+.casa-busca{display:flex;align-items:center;gap:9px;margin-bottom:16px;padding:0 14px;
+  border:1px solid #e0d1c2;border-radius:14px;background:#fff}
+.casa-busca svg{width:18px;height:18px;color:#b2a08e;flex:none}
+.casa-busca input{flex:1;min-width:0;min-height:52px;border:0;background:none;outline-offset:-4px;
+  font-size:16px;color:var(--ink);padding:0}
+.casa-busca input::-webkit-search-cancel-button{display:none}
+.casa-limpar{flex:none;min-width:44px;min-height:44px;border:0;background:none;color:#9b8879;font-size:22px;line-height:1}
+
+.casa-tipo{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  background:#f1ece5;color:#7e6754}
+.casa-tipo svg{width:17px;height:17px}
+.casa-tipo.foto{background:#eef1e9;color:#5f7a4f}
+.casa-tipo.planilha{background:#e9f0f1;color:#47787c}
+.casa-tipo.grande{width:44px;height:44px;border-radius:13px}
+.casa-tipo.grande svg{width:22px;height:22px}
+.casa-tipo.agora{background:#e7f1e9;color:#4d7a63}
+.casa-chip-vence{background:#f7ecdb;color:#9a6c2f}
+.casa-chip-anexo{background:#eceff4;color:#5d6b80}
+.casa-chip-agora{background:#e7f1e9;color:#43775f}
+.casa-chip-convidado{background:#f3eef7;color:#6f568a}
+.casa-bolinha.ok{background:#79a98d}
+.casa-hero.pequeno{margin-bottom:14px}
+.casa-hero.pequeno h2{font-size:21px;margin:4px 0 4px}
+.casa-hero.pequeno p{font-size:13px}
+.casa-linha.passado{opacity:.62}
+.casa-linha-texto .casa-meta svg{width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;color:#b08b56}
+.casa-dica svg{width:13px;height:13px;display:inline-block;vertical-align:-2px;margin-right:4px;color:#a98f76}
+
 /* --------------------------------------------- dedo, até 1180px --------
    Vale para celular E para tablet/dobrável: o alvo mínimo não muda porque a
    tela cresceu. Antes isso vivia só no bloco de 680px, e o tablet — que é
@@ -392,7 +422,7 @@ dialog input{border-color:#e0d1c2}
   #windows{inset:48px 0 72px}
   #desktop{inset:48px 0 78px;padding:26px 24px 40px}
   .desktop-greeting{position:static;margin-bottom:20px}
-  .desktop-shortcuts{position:static;display:grid;grid-template-columns:repeat(7,1fr);gap:16px 10px;margin:0 0 26px}
+  .desktop-shortcuts{position:static;display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:18px 10px;margin:0 0 26px}
   .desktop-shortcuts .app-button{width:auto}
   #widgets{position:static;display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
   .widget{position:relative!important;top:auto!important;left:auto!important;width:auto!important}
@@ -410,6 +440,7 @@ dialog input{border-color:#e0d1c2}
     border-radius:0;border-left:0;border-right:0;border-bottom:0;padding:4px 4px 4px;
     background:#2b1d24e8;backdrop-filter:blur(24px);box-shadow:0 -6px 24px #0000002e}
   .dock [data-app="inicio"],.dock [data-app="agenda"],.dock [data-app="avisos"],
+  .dock [data-app="documentos"],.dock [data-app="viagens"],
   .dock [data-app="ajustes"],.dock-divider{display:none}
   .dock .app-button{flex:1;width:auto;min-width:0;height:58px;justify-content:center;gap:3px;
     transform:none!important;padding:0 2px}

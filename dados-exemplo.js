@@ -219,6 +219,11 @@ const dadosExemplo = {
       detalhe: 'Prazo domingo. Qualquer um da casa pode assumir.',
       quando: 'hoje, 07:40', lido: false, acao: { texto: 'Assumir', cmd: 'assumir:t4' } },
 
+    { id: 'a6', tipo: 'documento', origem: 'Documento · Seguro do carro',
+      titulo: 'O seguro do carro vence em 12 dias',
+      detalhe: 'Documento guardado em Documentos. O aviso nasceu sozinho, da data de validade.',
+      quando: 'hoje, 06:00', lido: false },
+
     { id: 'a4', tipo: 'agenda', origem: 'Agenda · Reunião de pais',
       titulo: 'Reunião de pais amanhã às 19h',
       detalhe: 'Escola da Filha. 2 comentários no compromisso.',
@@ -228,6 +233,108 @@ const dadosExemplo = {
       titulo: 'Filha concluiu uma tarefa',
       detalhe: 'Concluir não depende da aprovação de ninguém.',
       quando: 'ontem, 19:12', lido: true }
+  ],
+
+  /* ----------------------------------------------------------- documentos */
+  /* O que a casa precisa achar na hora que precisa. Duas coisas mandam aqui:
+     a BUSCA (ninguém navega pasta) e a VALIDADE (documento que vence e
+     ninguém lembra). Documento com `venceEmDias` vira aviso sozinho.
+
+     Os mesmos três níveis do dinheiro valem aqui, com a leitura adaptada:
+       'aberto'  — todo mundo da casa vê e abre.
+       'total'   — a outra pessoa vê que o documento existe e o nome dele,
+                   mas não abre. (No dinheiro isso era "vê o valor".)
+       'privado' — a outra pessoa nem sabe que existe.
+     quem: id do membro, ou 'casa' quando é dos dois.
+     tipo: 'pdf' | 'foto' | 'planilha'                                     */
+  documentos: [
+    { id: 'd1', nome: 'Contrato de aluguel',        tipo: 'pdf',      quem: 'casa', data: '10/01/2026', tamanho: '2,4 MB', venceEmDias: null, visibilidade: 'aberto' },
+    { id: 'd2', nome: 'Seguro do carro',            tipo: 'pdf',      quem: 'casa', data: '03/03/2026', tamanho: '1,1 MB', venceEmDias: 12,   visibilidade: 'aberto' },
+    { id: 'd3', nome: 'Garantia da geladeira',      tipo: 'pdf',      quem: 'casa', data: '22/09/2024', tamanho: '640 KB', venceEmDias: 26,   visibilidade: 'aberto' },
+    { id: 'd4', nome: 'IPVA pago',                  tipo: 'pdf',      quem: 'pai',  data: '14/02/2026', tamanho: '210 KB', venceEmDias: null, visibilidade: 'aberto' },
+    { id: 'd5', nome: 'Nota fiscal da máquina de lavar', tipo: 'foto', quem: 'casa', data: '08/08/2025', tamanho: '3,2 MB', venceEmDias: null, visibilidade: 'aberto' },
+    { id: 'd6', nome: 'Foto do RG da Filha',        tipo: 'foto',     quem: 'casa', data: '19/05/2025', tamanho: '1,8 MB', venceEmDias: null, visibilidade: 'aberto' },
+    { id: 'd7', nome: 'Comprovante de residência',  tipo: 'pdf',      quem: 'casa', data: '05/09/2026', tamanho: '180 KB', venceEmDias: null, visibilidade: 'aberto' },
+    { id: 'd8', nome: 'Planilha da reforma',        tipo: 'planilha', quem: 'casa', data: '30/06/2026', tamanho: '95 KB',  venceEmDias: null, visibilidade: 'aberto' },
+    { id: 'd9', nome: 'Contrato de trabalho',       tipo: 'pdf',      quem: 'mae',  data: '01/02/2024', tamanho: '820 KB', venceEmDias: null, visibilidade: 'total' },
+    { id: 'd10',nome: 'Exames da consulta',         tipo: 'pdf',      quem: 'mae',  data: '11/09/2026', tamanho: '1,4 MB', venceEmDias: null, visibilidade: 'privado' },
+    { id: 'd11',nome: 'Apólice do seguro de vida',  tipo: 'pdf',      quem: 'pai',  data: '20/07/2026', tamanho: '760 KB', venceEmDias: null, visibilidade: 'privado' }
+  ],
+
+  /* -------------------------------------------------------------- viagens */
+  /* A mecânica é dele, e é o coração do app: a viagem tem DOIS MOMENTOS do
+     mesmo conteúdo. Primeiro planejando — lugares que alguém quis conhecer,
+     bagunçado de propósito. Depois, quando a viagem acontece, o que foi
+     acordado VIRA ROTEIRO por dia. O plano não é jogado fora: ele se converte,
+     e cada item do roteiro guarda em `veioDe` o lugar que alguém sugeriu.
+
+     estado: 'planejando' | 'acontecendo'
+     lugar.querem: 'vamos' | 'talvez' | 'nao'                              */
+  viagens: [
+    {
+      id: 'v1', nome: 'Fim de semana na serra', estado: 'acontecendo',
+      quando: 'agora · dia 2 de 3', participantes: ['pai','mae','filho','filha'],
+      convidados: [],
+      lugares: [
+        { id: 'p1', nome: 'Cachoeira do Salto',   quemSugeriu: 'filho', querem: 'vamos' },
+        { id: 'p2', nome: 'Café colonial',        quemSugeriu: 'mae',   querem: 'vamos' },
+        { id: 'p3', nome: 'Trilha do mirante',    quemSugeriu: 'pai',   querem: 'vamos' },
+        { id: 'p4', nome: 'Parque de aventura',   quemSugeriu: 'filha', querem: 'talvez' }
+      ],
+      // O roteiro nasceu das escolhas acima. veioDe aponta para o lugar.
+      roteiro: [
+        { dia: 'Ontem', itens: [
+          { hora: '14:00', titulo: 'Chegada e almoço', veioDe: null },
+          { hora: '16:30', titulo: 'Café colonial', veioDe: 'p2' } ] },
+        { dia: 'Hoje', itens: [
+          { hora: '09:00', titulo: 'Trilha do mirante', veioDe: 'p3' },
+          { hora: '13:00', titulo: 'Almoço na cidade', veioDe: null },
+          { hora: '15:30', titulo: 'Cachoeira do Salto', veioDe: 'p1' } ] },
+        { dia: 'Amanhã', itens: [
+          { hora: '10:00', titulo: 'Volta para casa', veioDe: null } ] }
+      ],
+      reservas: [
+        { nome: 'Pousada Vista Alta', tipo: 'hospedagem', anexo: 'PDF', feito: true },
+        { nome: 'Café colonial — mesa para 4', tipo: 'reserva', anexo: '', feito: true }
+      ],
+      preparacao: [
+        { texto: 'Levar casaco e bota', ok: true },
+        { texto: 'Deixar a chave com a vizinha', ok: true }
+      ],
+      despesas: [
+        { oque: 'Pousada', valor: 980.00, quem: 'pai' },
+        { oque: 'Combustível', valor: 260.00, quem: 'pai' },
+        { oque: 'Café colonial', valor: 214.00, quem: 'mae' }
+      ],
+      orcamento: 2200.00
+    },
+    {
+      id: 'v2', nome: 'Praia em janeiro', estado: 'planejando',
+      quando: 'janeiro · 5 dias, ainda sem data fechada',
+      participantes: ['pai','mae','filho','filha'],
+      convidados: [ { nome: 'Tia Cláudia', acesso: 'só esta viagem', ate: 'até o fim da viagem' } ],
+      lugares: [
+        { id: 'q1', nome: 'Praia do Forte',        quemSugeriu: 'mae',   querem: 'vamos'  },
+        { id: 'q2', nome: 'Passeio de escuna',     quemSugeriu: 'filho', querem: 'vamos'  },
+        { id: 'q3', nome: 'Projeto Tamar',         quemSugeriu: 'filha', querem: 'vamos'  },
+        { id: 'q4', nome: 'Mergulho com cilindro', quemSugeriu: 'filho', querem: 'talvez' },
+        { id: 'q5', nome: 'Restaurante do porto',  quemSugeriu: 'pai',   querem: 'talvez' },
+        { id: 'q6', nome: 'Parque aquático',       quemSugeriu: 'filha', querem: 'nao'    }
+      ],
+      roteiro: [],   // vazio de propósito: a viagem ainda não aconteceu
+      reservas: [
+        { nome: 'Passagens', tipo: 'transporte', anexo: '', feito: false },
+        { nome: 'Casa na praia', tipo: 'hospedagem', anexo: '', feito: false },
+        { nome: 'Escuna — orçamento', tipo: 'passeio', anexo: 'PDF', feito: false }
+      ],
+      preparacao: [
+        { texto: 'Conferir documento das crianças', ok: false },
+        { texto: 'Ver se a Tia Cláudia vai mesmo', ok: false },
+        { texto: 'Revisar o carro', ok: false }
+      ],
+      despesas: [],
+      orcamento: 6000.00
+    }
   ],
 
   /* --------------------------------------------------------- assistente */

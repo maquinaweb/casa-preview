@@ -25,11 +25,15 @@ const icons = {
  spark:'<path d="M12 3.5 13.9 9l5.6 1.9-5.6 1.9L12 18.4l-1.9-5.6L4.5 11 10.1 9Z"/><path d="M18.5 3.5v3m1.5-1.5h-3"/>',
  plus:'<path d="M12 5v14M5 12h14"/>',
  repeat:'<path d="M4 9a5 5 0 0 1 5-5h9m0 0-3-3m3 3-3 3"/><path d="M20 15a5 5 0 0 1-5 5H6m0 0 3 3m-3-3 3-3"/>',
- wallet:'<path d="M3 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1"/><rect x="3" y="8" width="18" height="12" rx="3"/><path d="M16 14h2"/>'
+ wallet:'<path d="M3 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1"/><rect x="3" y="8" width="18" height="12" rx="3"/><path d="M16 14h2"/>',
+ doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5M9 13h6m-6 4h4"/>',
+ plane:'<path d="M10.5 13.5 3 11l18-7-7 18-2.5-7.5Z"/><path d="m10.5 13.5 4-4"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4.5 4.5"/>',
+ chevron:'<path d="m9 5 7 7-7 7"/>'
 };
 function svg(name){return `<svg viewBox="0 0 24 24" aria-hidden="true">${icons[name]||icons.desktop}</svg>`;}
 document.querySelectorAll('[data-icon]').forEach(e=>e.innerHTML=svg(e.dataset.icon));
-// Os sete aplicativos da Fase 1 do Casa, mais os dois do sistema (ajustes e perfil).
+// Os nove aplicativos do Casa, mais os dois do sistema (ajustes e perfil).
 const apps=[
  {id:'inicio',name:'Casa',icon:'casa',colors:['#e0a469','#bb6b45']},
  {id:'hoje',name:'Hoje',icon:'sun',colors:['#f3bd72','#dd8a4e']},
@@ -38,6 +42,8 @@ const apps=[
  {id:'compras',name:'Compras',icon:'cart',colors:['#8bb8d6','#4a7ea6']},
  {id:'agenda',name:'Agenda',icon:'calendar',colors:['#e5a0a0','#c06a6f']},
  {id:'avisos',name:'Avisos',icon:'bell',colors:['#c6a4d8','#8e63b0']},
+ {id:'documentos',name:'Documentos',icon:'doc',colors:['#a9b6cc','#61708f']},
+ {id:'viagens',name:'Viagens',icon:'plane',colors:['#8fc2d8','#4d8fa8']},
  {id:'assistente',name:'Assistente',icon:'spark',colors:['#d9bb7e','#b08b56']},
  {id:'ajustes',name:'Ajustes',icon:'sliders',colors:['#b6a99c','#7d7268']},
  {id:'perfil',name:'Meu perfil',icon:'user',colors:['#efcfa9','#b68b73'],launcher:false}

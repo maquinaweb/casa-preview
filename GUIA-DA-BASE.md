@@ -1,8 +1,8 @@
 # Guia da base
 
 Esta pasta é uma cópia do protótipo do **Layout Operacional**
-(`projetos/plataforma-maquinaweb/prototipo-os/`), com os aplicativos trocados pelos sete
-da Fase 1 do **Casa**. O original não foi alterado.
+(`projetos/plataforma-maquinaweb/prototipo-os/`), com os aplicativos trocados pelos nove
+do **Casa**. O original não foi alterado.
 
 ## Estrutura original preservada
 
@@ -25,6 +25,20 @@ componentes ao criar novas telas.
 4. **Não altere `openApp`, `startWindowGesture` nem a ampliação do dock** para mudanças
    de conteúdo. O `openApp` chama `aoAbrirApp(id)` no fim: é ali que uma tela nova pede
    para ser redesenhada ao abrir, sem tocar na rotina de janelas.
+
+## Documentos e Viagens
+
+Os dois últimos entraram pelo caminho documentado, sem tocar em `openApp`,
+`startWindowGesture` nem no dock: entrada no array `apps`, função de tela em
+`casa-apps.js`, registro em `telas`, dados em `dados-exemplo.js`.
+
+Em Documentos, a visibilidade reaproveita `nivelDeAcesso()` — os objetos usam o campo
+`quem` justamente para isso. A leitura do nível do meio muda: no dinheiro é "vê o valor",
+aqui é "vê o nome, não abre".
+
+Em Viagens, o vínculo entre os dois momentos é o campo `veioDe` de cada item do roteiro,
+que aponta para o `id` de um lugar sugerido. É o que permite mostrar "veio da ideia da
+Filha" no roteiro.
 
 ## Os três formatos
 

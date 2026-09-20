@@ -6,7 +6,7 @@ superior direito fica lá o tempo todo por isso.
 
 ## Como abrir
 
-Abra `index.html` no navegador — dois cliques, sem instalar nada. No celular, mande o
+Abra `casa-preview.html` no navegador — dois cliques, sem instalar nada. No celular, mande o
 arquivo (ou a pasta inteira) e abra do mesmo jeito.
 
 Na tela de entrada é só clicar em **Entrar** — os campos não fazem nada.
@@ -23,7 +23,7 @@ Quem decide o número de colunas é a **largura da janela**, não a da tela. Por
 o celular, girar o tablet ou redimensionar a janela reorganiza tudo sozinho **sem perder
 o que estava aberto** — se você estava vendo uma tarefa, continua vendo aquela tarefa.
 
-## As sete telas
+## As nove telas
 
 | Tela | O que mostra |
 |---|---|
@@ -33,6 +33,8 @@ o que estava aberto** — se você estava vendo uma tarefa, continua vendo aquel
 | **Compras e despensa** | Lista ativa (marca e desmarca), listas reutilizáveis ("mercado do mês") e a despensa com o que está em falta |
 | **Agenda** | A semana com compromissos e tarefas com prazo na mesma lista |
 | **Avisos** | Avisos ligados a um registro — sem chat geral |
+| **Documentos** | Busca no topo, porque ninguém navega pasta. Contratos, notas, fotos e garantias, com tipo, dono e data. **Validade é o ponto**: seguro do carro e garantia da geladeira aparecem com o prazo e geram aviso sozinhos |
+| **Viagens** | A viagem tem dois momentos do mesmo conteúdo: **planejando** (lugares que alguém quis, marcados como vamos/talvez) e **acontecendo** (o que foi combinado virou roteiro por dia, e cada item lembra de quem foi a ideia). Tem convidado externo com acesso só àquela viagem |
 | **Assistente** | O agente da família: responde, registra pelo texto e avisa sem ser chamado |
 
 ## Trocar os nomes da família
@@ -65,7 +67,10 @@ assistente, todos comentados em português. Salve e recarregue a página.
 - lançar um gasto em três toques: quanto, o que foi, lançar. Quem lançou e a data o
   sistema preenche; quem pode ver já vem em "os dois veem" e muda com um toque;
 - marcar conta do mês como paga e ver a "sobra" mudar junto;
-- mandar ele apagar algo, e ver que ele pergunta antes.
+- mandar ele apagar algo, e ver que ele pergunta antes;
+- **procurar um documento** por parte do nome, pelo tipo ou por quem guardou;
+- **abrir a viagem que está acontecendo** e ver o roteiro do dia dizendo de quem veio cada ideia;
+- na viagem em planejamento, tocar num lugar para alternar entre vamos / talvez / fica para a próxima.
 
 Recarregar a página devolve tudo ao começo.
 
@@ -86,13 +91,13 @@ e isso está escrito na tela, não escondido.
 
 | Arquivo | O que é |
 |---|---|
-| `index.html` | A página. Carrega os scripts nesta ordem, que importa |
+| `casa-preview.html` | A página. Carrega os scripts nesta ordem, que importa |
 | `dados-exemplo.js` | **Todo** o conteúdo fictício. É onde se mexe |
 | `desktop.js` / `desktop.css` | A base do Layout Operacional: janelas, dock, cartões |
-| `casa-apps.js` | Seis das sete telas, incluindo Dinheiro |
+| `casa-apps.js` | Oito das nove telas |
 | `assistente.js` | A tela do agente |
 | `casa.css` | Cores de casa e os alvos de toque do celular |
 | `account.js` / `account.css` | Entrada e perfil, vindos da base |
 
-Os scripts vivem em escopo global e dependem da ordem em que o `index.html` os carrega.
+Os scripts vivem em escopo global e dependem da ordem em que o `casa-preview.html` os carrega.
 Não converta para módulo e não reordene.
