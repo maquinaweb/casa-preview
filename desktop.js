@@ -29,11 +29,13 @@ const icons = {
  doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5M9 13h6m-6 4h4"/>',
  plane:'<path d="M10.5 13.5 3 11l18-7-7 18-2.5-7.5Z"/><path d="m10.5 13.5 4-4"/>',
  search:'<circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4.5 4.5"/>',
- chevron:'<path d="m9 5 7 7-7 7"/>'
+ chevron:'<path d="m9 5 7 7-7 7"/>',
+ prato:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/>',
+ fora:'<path d="M5 3v8a3 3 0 0 0 6 0V3M8 11v10"/><path d="M17 3c-1.5 2-2 4-2 6s.7 3 2 3 2-1 2-3-.5-4-2-6Zm0 9v9"/>'
 };
 function svg(name){return `<svg viewBox="0 0 24 24" aria-hidden="true">${icons[name]||icons.desktop}</svg>`;}
 document.querySelectorAll('[data-icon]').forEach(e=>e.innerHTML=svg(e.dataset.icon));
-// Os nove aplicativos do Casa, mais os dois do sistema (ajustes e perfil).
+// Os dez aplicativos do Casa, mais os dois do sistema (ajustes e perfil).
 const apps=[
  {id:'inicio',name:'Casa',icon:'casa',colors:['#e0a469','#bb6b45']},
  {id:'hoje',name:'Hoje',icon:'sun',colors:['#f3bd72','#dd8a4e']},
@@ -42,6 +44,7 @@ const apps=[
  {id:'compras',name:'Compras',icon:'cart',colors:['#8bb8d6','#4a7ea6']},
  {id:'agenda',name:'Agenda',icon:'calendar',colors:['#e5a0a0','#c06a6f']},
  {id:'avisos',name:'Avisos',icon:'bell',colors:['#c6a4d8','#8e63b0']},
+ {id:'comida',name:'Comida',icon:'prato',colors:['#e8ab8e','#c46f52']},
  {id:'documentos',name:'Documentos',icon:'doc',colors:['#a9b6cc','#61708f']},
  {id:'viagens',name:'Viagens',icon:'plane',colors:['#8fc2d8','#4d8fa8']},
  {id:'assistente',name:'Assistente',icon:'spark',colors:['#d9bb7e','#b08b56']},

@@ -106,7 +106,9 @@ const dadosExemplo = {
     { nome: 'Leite',    local: 'Geladeira',          situacao: 'pouco', detalhe: '2 caixas' },
     { nome: 'Óleo',     local: 'Armário da cozinha', situacao: 'ok',    detalhe: '' },
     { nome: 'Açúcar',   local: 'Armário da cozinha', situacao: 'ok',    detalhe: '' },
-    { nome: 'Sabão em pó', local: 'Área de serviço', situacao: 'pouco', detalhe: 'meio pacote' }
+    { nome: 'Sabão em pó', local: 'Área de serviço', situacao: 'pouco', detalhe: 'meio pacote' },
+    { nome: 'Macarrão', local: 'Armário da cozinha', situacao: 'ok',    detalhe: '2 pacotes' },
+    { nome: 'Molho de tomate', local: 'Armário da cozinha', situacao: 'falta', detalhe: 'acabou ontem' }
   ],
 
   /* ------------------------------------------------------------- agenda */
@@ -234,6 +236,54 @@ const dadosExemplo = {
       detalhe: 'Concluir não depende da aprovação de ninguém.',
       quando: 'ontem, 19:12', lido: true }
   ],
+
+  /* --------------------------------------------------------------- comida */
+  /* O nome é COMIDA, não cardápio — palavra de restaurante não entra em casa.
+     Os rótulos são "Almoço" e "Janta", como se fala.
+
+     A armadilha deste tipo de módulo é exigir planejar a semana num domingo:
+     é assim que ele é abandonado na terceira semana. Então ANOTAR DEPOIS vale
+     tanto quanto planejar antes, e dia em branco é normal — nunca vira
+     cobrança nem aviso.
+
+     Cada refeição é um de três estados, escolhidos num toque:
+       'casa'  — comeu em casa, com o quê em `oque`
+       'fora'  — saiu ou pediu; `gasto` opcional, nunca obrigatório
+       'sobra' — comeu o que sobrou
+       null    — ainda não combinaram, e está tudo bem
+     `ingredientes` é opcional e só serve para o aviso leve de falta: não
+     existe cadastro de receita, porque exigir isso mata o módulo.         */
+  comida: {
+    dias: [
+      { id: 'c-1', emDias: -1,
+        almoco: { estado: 'casa',  oque: 'Frango com batata' },
+        janta:  { estado: 'sobra', oque: 'O que sobrou do almoço' } },
+
+      { id: 'c0', emDias: 0,
+        almoco: { estado: 'casa',  oque: 'Macarrão', ingredientes: ['Macarrão','Molho de tomate'] },
+        janta:  { estado: null,    oque: '' } },
+
+      { id: 'c1', emDias: 1,
+        almoco: { estado: 'casa',  oque: 'Arroz, feijão e bife', ingredientes: ['Arroz','Feijão'] },
+        janta:  { estado: 'fora',  oque: 'Pizza', gasto: null } },
+
+      { id: 'c2', emDias: 2,
+        almoco: { estado: null, oque: '' },
+        janta:  { estado: null, oque: '' } },
+
+      { id: 'c3', emDias: 3,
+        almoco: { estado: 'casa',  oque: 'Peixe com legumes' },
+        janta:  { estado: 'sobra', oque: 'O que sobrou do almoço' } },
+
+      { id: 'c4', emDias: 4,
+        almoco: { estado: 'fora',  oque: 'Churrasco na casa da avó', gasto: null },
+        janta:  { estado: null,    oque: '' } },
+
+      { id: 'c5', emDias: 5,
+        almoco: { estado: null,   oque: '' },
+        janta:  { estado: 'casa', oque: 'Sopa' } }
+    ]
+  },
 
   /* ----------------------------------------------------------- documentos */
   /* O que a casa precisa achar na hora que precisa. Duas coisas mandam aqui:
@@ -367,6 +417,9 @@ const dadosExemplo = {
       { de: 'agente', hora: '13:20', cadeado: true,
         texto: 'Esse lançamento é particular da Mãe. Não posso mostrar, nem por cima — se eu desse o total da casa agora, dava para deduzir o valor dela.' },
 
+      { de: 'agente', tipo: 'proativo', hora: '17:40',
+        texto: 'O que vai ter pra janta? Ninguém marcou ainda — se quiser, me diz e eu anoto.' },
+
       { de: 'pai', hora: '13:50', texto: 'apaga a tarefa da faxina' },
 
       { de: 'agente', tipo: 'confirmacao', hora: '13:50',
@@ -410,6 +463,11 @@ const dadosExemplo = {
         lista: ['Feijão — em falta há 4 dias', 'Café — acabou hoje',
                 'Leite — 2 caixas', 'Sabão em pó — meio pacote'] },
 
+      { texto: 'hoje a janta é pizza',
+        resposta: 'Anotei a janta de hoje.',
+        cartao: { tipo: 'comida', titulo: 'Pizza', detalhe: 'janta de hoje · fora' },
+        acao: 'janta:Pizza' },
+
       // listaAuto:'aPagar' monta a lista das contas em aberto na hora.
       { texto: 'quanto falta pagar este mês?',
         resposta: 'Faltam {aPagar} em contas até o fim do mês.',
@@ -428,6 +486,9 @@ const dadosExemplo = {
       { palavras: ['acabou', 'comprar', 'compra', 'falta', 'lista'],
         resposta: 'Coloquei na lista de compras.',
         acaoAuto: 'compra' },
+      { palavras: ['janta', 'jantar', 'almoço', 'almoco', 'comida', 'pizza'],
+        resposta: 'Anotei a janta de hoje.',
+        acaoAuto: 'comida' },
       { palavras: ['lembrar', 'lembra', 'preciso', 'pagar', 'marcar', 'agendar'],
         resposta: 'Criei a tarefa.',
         acaoAuto: 'tarefa' },
@@ -437,6 +498,6 @@ const dadosExemplo = {
         resposta: 'Apagar não tem volta, então prefiro confirmar antes. Me diga qual registro e eu pergunto direitinho.',
         cadeado: true }
     ],
-    semResposta: 'Anotei. Nesta demonstração eu só sei responder sobre tarefas, compras, despensa, agenda e dinheiro desta casa.'
+    semResposta: 'Anotei. Nesta demonstração eu só sei responder sobre tarefas, compras, despensa, agenda, comida e dinheiro desta casa.'
   }
 };

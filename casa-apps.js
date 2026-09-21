@@ -1,6 +1,6 @@
 'use strict';
 /* ==========================================================================
-   casa-apps.js — oito das nove telas do Casa. A nona, o Assistente,
+   casa-apps.js — nove das dez telas do Casa. A décima, o Assistente,
    está em assistente.js.
 
    Tudo aqui lê de `dadosExemplo` (dados-exemplo.js). Nenhum nome de pessoa
@@ -57,7 +57,7 @@ function voltar(tela,rotulo){
 
 // O que está selecionado em cada tela. Sobrevive a dobrar, girar e
 // redimensionar, porque é estado de JavaScript e não depende do layout.
-const selecao = { tarefas:null, documentos:null, viagens:null };
+const selecao = { tarefas:null, documentos:null, viagens:null, comida:null };
 
 /* ---------------------------------------------------------------- HOJE  */
 // A tela mais importante. Poucos blocos, cada um com nome — a pessoa segura
@@ -117,6 +117,18 @@ function telaHoje(){
           ? chip('já está na lista','casa-chip-ok')
           : `<button class="casa-botao-min" onclick="jogarNaLista('${jsStr(i.nome)}')">${svg('plus')}lista</button>`}
       </div>`).join('')}
+  </section>
+
+  <section class="casa-bloco">
+    <div class="casa-bloco-head"><h3>${svg('prato')}Comida</h3><button class="link-button" onclick="abrirComida()">trocar</button></div>
+    ${(()=>{const d=diaDeHoje();if(!d)return '';
+      return REFEICOES.map(([chave,rotulo])=>`
+      <div class="casa-linha">
+        <span class="casa-hora">${rotulo}</span>
+        <button class="casa-linha-abrir" onclick="abrirComida()">
+          <strong>${esc(resumoRefeicao(d[chave]))}</strong>
+        </button>
+      </div>`).join('');})()}
   </section>
 
   <section class="casa-bloco">
@@ -440,6 +452,104 @@ function telaAvisos(){
   Cada pessoa escolhe onde recebe e com quanta antecedência — nesta demonstração isso é só um desenho.</p>`;
 }
 
+/* --------------------------------------------------------------- COMIDA */
+/* "Cardápio" é palavra de restaurante — em casa o que existe é "o que vai
+   ter pra janta?". Daí o nome do app e os rótulos: Almoço e Janta.
+
+   O que mata este tipo de módulo é exigir planejar a semana num domingo.
+   Então anotar depois é tão fácil quanto planejar antes, e dia em branco
+   é normal: nada de cobrança visual, nada de aviso.                      */
+const ESTADOS_COMIDA = [
+  { id:'casa',  rotulo:'em casa', icone:'prato' },
+  { id:'fora',  rotulo:'fora',    icone:'fora'  },
+  { id:'sobra', rotulo:'sobra',   icone:'box'   }
+];
+const REFEICOES = [ ['almoco','Almoço'], ['janta','Janta'] ];
+
+function diaDeComida(id){return dadosExemplo.comida.dias.find(d=>d.id===id)||null;}
+function diaDeHoje(){return dadosExemplo.comida.dias.find(d=>Number(d.emDias)===0)||null;}
+function resumoRefeicao(r){
+  if(!r||!r.estado) return 'a combinar';
+  if(r.estado==='fora')  return r.oque?('fora · '+r.oque.toLocaleLowerCase('pt-BR')):'fora';
+  if(r.estado==='sobra') return 'sobra';
+  return r.oque || 'em casa';
+}
+// Elo com a despensa, sem cadastro de receita: usa os ingredientes quando
+// existem e, quando não, procura o próprio nome do prato na despensa.
+function faltaParaOPrato(r){
+  if(!r||r.estado!=='casa') return [];
+  const nomes = r.ingredientes && r.ingredientes.length
+    ? r.ingredientes
+    : (r.oque? [r.oque] : []);
+  return dadosExemplo.despensa.filter(i=>i.situacao==='falta'
+    && nomes.some(n=>n.toLocaleLowerCase('pt-BR').includes(i.nome.toLocaleLowerCase('pt-BR'))
+                  || i.nome.toLocaleLowerCase('pt-BR').includes(n.toLocaleLowerCase('pt-BR'))));
+}
+function blocoRefeicao(dia,chave,rotulo){
+  const r = dia[chave];
+  const falta = faltaParaOPrato(r);
+  return `
+  <div class="casa-refeicao">
+    <div class="casa-refeicao-topo">
+      <strong>${rotulo}</strong>
+      <span class="casa-meta">${esc(resumoRefeicao(r))}</span>
+    </div>
+    <div class="casa-estados">
+      ${ESTADOS_COMIDA.map(e=>`<button type="button" class="${r.estado===e.id?'ativa':''}"
+        aria-pressed="${r.estado===e.id}"
+        onclick="definirEstado('${dia.id}','${chave}','${e.id}')">${svg(e.icone)}${e.rotulo}</button>`).join('')}
+      ${r.estado?`<button type="button" class="casa-limpar-estado" onclick="definirEstado('${dia.id}','${chave}','')" aria-label="Deixar em branco">limpar</button>`:''}
+    </div>
+    ${r.estado==='casa'||r.estado==='sobra'?`
+      <input class="casa-prato" value="${esc(r.oque||'')}" maxlength="60" autocomplete="off"
+        placeholder="${r.estado==='sobra'?'sobra do quê?':'o que foi?'}"
+        aria-label="O que foi o ${rotulo.toLocaleLowerCase('pt-BR')}"
+        onchange="definirPrato('${dia.id}','${chave}',this.value)">`:''}
+    ${r.estado==='fora'?`
+      <input class="casa-prato" value="${esc(r.oque||'')}" maxlength="60" autocomplete="off"
+        placeholder="saiu ou pediu o quê?" aria-label="O que foi"
+        onchange="definirPrato('${dia.id}','${chave}',this.value)">
+      ${r.gasto!=null
+        ? `<p class="casa-dica">${svg('wallet')}Gasto de ${brl(r.gasto)} lançado em Dinheiro.</p>`
+        : `<form class="casa-gasto" onsubmit="lancarComidaFora(event,'${dia.id}','${chave}')">
+             <input inputmode="decimal" placeholder="Gastou quanto? (opcional)" maxlength="12"
+               aria-label="Valor gasto" autocomplete="off">
+             <button class="casa-botao-min" type="submit">lançar</button>
+           </form>`}`:''}
+    ${falta.length?`<p class="casa-dica falta">${svg('cart')}Falta ${esc(falta.map(i=>i.nome.toLocaleLowerCase('pt-BR')).join(' e '))}.
+      <button class="casa-botao-min" onclick="jogarNaLista('${jsStr(falta[0].nome)}')">${svg('plus')}lista</button></p>`:''}
+    ${!r.estado?`<p class="casa-dica">Pode deixar em branco. Ninguém precisa decidir hoje.</p>`:''}
+  </div>`;
+}
+function detalheDia(dia){
+  if(!dia) return `<div class="casa-painel-vazio">${svg('prato')}<strong>Escolha um dia</strong><span>Toque num dia para dizer o que teve, ou o que vai ter.</span></div>`;
+  return `
+  ${voltar('comida','A semana toda')}
+  <header class="casa-hero pequeno">
+    <span class="casa-eyebrow">${esc(dataDoDia(dia.emDias))}</span>
+    <h2>${esc(rotuloDoDia(dia.emDias))}</h2>
+  </header>
+  ${REFEICOES.map(([chave,rotulo])=>blocoRefeicao(dia,chave,rotulo)).join('')}`;
+}
+function telaComida(){
+  const dias = dadosExemplo.comida.dias;
+  const atual = diaDeComida(selecao.comida) || diaDeHoje() || dias[0] || null;
+  const esquerda = dias.map(d=>`
+    <div class="casa-linha ${selecao.comida===d.id?'escolhida':''}">
+      <button class="casa-linha-abrir" onclick="selecionarDia('${d.id}')">
+        <strong>${esc(rotuloDoDia(d.emDias))}</strong>
+        <span class="casa-meta">Almoço ${esc(resumoRefeicao(d.almoco))} · Janta ${esc(resumoRefeicao(d.janta))}</span>
+      </button>
+      <span class="casa-seta" aria-hidden="true">${svg('chevron')}</span>
+    </div>`).join('');
+  return `
+  <div class="panel-header"><h2>Comida</h2><span class="pill">esta semana</span></div>
+  ${duasColunas(esquerda,detalheDia(atual),true,selecao.comida!==null)}
+  <p class="casa-rodape">Anotar depois vale tanto quanto planejar antes. Dia em branco é dia normal —
+  o sistema não cobra ninguém por isso.</p>
+  ${fab('O que teve hoje',"anotarHoje()")}`;
+}
+
 /* ---------------------------------------------------------- DOCUMENTOS  */
 // Busca em cima, porque ninguém navega pasta — todo mundo procura.
 // Validade é o que faz o módulo valer: documento que vence e ninguém lembra.
@@ -653,6 +763,61 @@ function telaViagens(){
 }
 
 /* ------------------------------------------------------------- ações   */
+function selecionarDia(id){
+  selecao.comida = id;
+  redesenhar('comida');
+  document.getElementById('comida')?.closest('.window-content')?.scrollTo({top:0});
+}
+function abrirComida(){anotarHoje();}
+function anotarHoje(){
+  const hoje = diaDeHoje();
+  if(!hoje) return;
+  selecao.comida = hoje.id;
+  redesenhar('comida');
+  if(!windows.has('comida')) openApp('comida'); else focusWindow('comida');
+}
+function definirEstado(idDia,chave,estado){
+  const dia = diaDeComida(idDia);
+  if(!dia||!dia[chave]) return;
+  dia[chave].estado = estado || null;
+  if(!estado) dia[chave].oque = '';
+  if(estado==='sobra'&&!dia[chave].oque) dia[chave].oque = 'O que sobrou do almoço';
+  atualizarTudo();
+  redesenhar('comida');
+}
+function definirPrato(idDia,chave,texto){
+  const dia = diaDeComida(idDia);
+  if(!dia||!dia[chave]) return;
+  dia[chave].oque = String(texto||'').trim();
+  atualizarTudo();
+  redesenhar('comida');
+}
+// Comer fora é das maiores despesas variáveis de uma casa. O sistema oferece
+// lançar, e não insiste: sem valor, não acontece nada.
+function lancarComidaFora(evento,idDia,chave){
+  evento.preventDefault();
+  const campo = evento.target.querySelector('input');
+  const valor = Number(String(campo.value).trim().replace(/\./g,'').replace(',','.'));
+  const dia = diaDeComida(idDia);
+  if(!dia||!valor||valor<=0){notify('Sem valor, sem lançamento — e está tudo bem.');return;}
+  dia[chave].gasto = valor;
+  dadosExemplo.dinheiro.lancamentos.unshift({
+    id:'l'+Date.now(), tipo:'saida',
+    descricao: dia[chave].oque || 'Comida fora', valor, quem: verComo,
+    conta: dadosExemplo.dinheiro.contas.find(c=>c.dono===verComo)?.id||'cc-casa',
+    dia: String(new Date().getDate()).padStart(2,'0'), visibilidade:'aberto'
+  });
+  notify(`${dia[chave].oque||'Comida fora'} — ${brl(valor)} lançado em Dinheiro.`);
+  atualizarTudo();
+  redesenhar('comida');
+}
+// Usada também pelo assistente: "hoje a janta é pizza".
+function registrarJanta(texto,estado){
+  const hoje = diaDeHoje();
+  if(!hoje) return;
+  hoje.janta.estado = estado || 'casa';
+  hoje.janta.oque = texto;
+}
 function filtrarDocumentos(termo){
   buscaDoc = termo;
   selecao.documentos = null;
@@ -894,7 +1059,8 @@ function ligarDeslizar(){
 
 /* ------------------------------------------------------- montar/atualizar */
 const telas = {hoje:telaHoje, dinheiro:telaDinheiro, tarefas:telaTarefas, compras:telaCompras,
-               agenda:telaAgenda, avisos:telaAvisos, documentos:telaDocumentos, viagens:telaViagens};
+               comida:telaComida, agenda:telaAgenda, avisos:telaAvisos,
+               documentos:telaDocumentos, viagens:telaViagens};
 
 function redesenhar(id){
   const alvo = document.getElementById(id);

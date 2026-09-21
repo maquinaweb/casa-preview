@@ -337,12 +337,51 @@ dialog input{border-color:#e0d1c2}
    no cabeçalho da tela. Fica à direita, longe da dobra do aparelho.      */
 .casa-fab{display:none}
 @media(max-width:1180px){
-  .casa-fab{position:fixed;right:16px;bottom:78px;z-index:40;display:inline-flex;align-items:center;gap:8px;
+  /* O botão de adicionar cobria o fim da lista. Duas correções, e nenhuma
+     delas é subir o botão para o topo — no celular o topo está fora do
+     alcance do polegar:
+       1. ele é `sticky`, não `fixed`: ocupa lugar de verdade no fim do
+          conteúdo, então com lista curta ele fica ABAIXO do último item;
+       2. a tela cresce até a altura visível, então com lista curta ele
+          continua no canto de baixo, onde a mão espera.
+     Rolando, ele gruda a 14px do fim e a lista passa por baixo até o fim. */
+  .casa-view:has(.casa-fab){display:flex;flex-direction:column}
+  .casa-view:has(.casa-fab) > *{flex:none}
+  .casa-fab{position:sticky;bottom:calc(14px + env(safe-area-inset-bottom));z-index:40;
+    margin:22px 0 0 auto;align-self:flex-end;
+    display:inline-flex;align-items:center;gap:8px;
     min-height:56px;padding:0 20px;border:0;border-radius:28px;background:var(--casa-acento);color:#fff;
     font-size:15px;font-weight:650;box-shadow:0 8px 22px #5a3a2840}
   .casa-fab svg{width:20px;height:20px;stroke-width:2.2}
   .casa-fab:active{background:var(--casa-acento-escuro)}
+  /* E a barra de abas respeita o gesto de home dos celulares atuais. */
+  .dock{padding-bottom:calc(4px + env(safe-area-inset-bottom))}
 }
+
+/* ---------------------------------------------------------------- comida */
+/* Três estados por refeição, um toque cada. Em branco é estado válido e não
+   ganha nenhum destaque negativo — nada de vermelho, nada de "pendente". */
+.casa-refeicao{border:1px solid var(--casa-borda);border-radius:16px;background:#fffcf8;
+  padding:12px 14px 14px;margin-bottom:12px}
+.casa-refeicao-topo{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}
+.casa-refeicao-topo strong{font-family:Manrope,system-ui,sans-serif;font-size:16px;font-weight:700}
+.casa-refeicao-topo .casa-meta{margin:0;text-align:right}
+.casa-estados{display:flex;flex-wrap:wrap;gap:6px}
+.casa-estados button{display:inline-flex;align-items:center;gap:6px;min-height:46px;
+  border:1px solid var(--casa-borda);background:#fff;color:#7a6252;border-radius:22px;
+  padding:8px 15px;font-size:13.5px;font-weight:600}
+.casa-estados button svg{width:15px;height:15px}
+.casa-estados button.ativa{background:var(--casa-suave);border-color:#dcc6ae;color:#8a5730}
+.casa-estados .casa-limpar-estado{border-style:dashed;color:#a08d7c;font-weight:500}
+.casa-prato{width:100%;min-height:48px;margin-top:10px;padding:10px 13px;border:1px solid #e0d1c2;
+  border-radius:12px;background:#fff;color:var(--ink);font-size:15px}
+.casa-gasto{display:flex;gap:8px;margin-top:10px}
+.casa-gasto input{flex:1;min-width:0;min-height:48px;padding:10px 13px;border:1px solid #e0d1c2;
+  border-radius:12px;background:#fff;color:var(--ink);font-size:15px}
+.casa-gasto button{flex:none}
+.casa-dica.falta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#f9f2e8;
+  border-radius:10px;padding:8px 10px;margin-top:10px;color:#8a6a4f}
+.casa-dica.falta svg{color:#b08b56}
 
 /* ------------------------------------------------ documentos e viagens */
 /* Busca no topo: é o gesto principal de Documentos, não um filtro escondido. */
@@ -403,9 +442,14 @@ dialog input{border-color:#e0d1c2}
   .widget-footer button{min-height:50px;min-width:50px;padding:0 2px}
   .widget-remove{width:26px;height:26px;position:relative}
   .widget-remove:after{content:'';position:absolute;inset:-12px}
-  /* janela: botões pequenos, alvo de 48 */
-  .window-controls button{position:relative}
-  .window-controls button:after{content:'';position:absolute;inset:-15px}
+  /* Janela que já ocupa a tela toda não tem o que minimizar nem maximizar:
+     os dois viram ruído e alvo de toque desperdiçado. Fica só fechar, com
+     um alvo bem maior que 48px e o × sempre visível — em toque não existe
+     o "passar o mouse" que revelava o símbolo.                            */
+  .win-min,.win-max{display:none}
+  .win-close{width:30px;height:30px;position:relative;font-size:19px;font-weight:600}
+  .win-close span{opacity:.85!important}
+  .win-close:after{content:'';position:absolute;inset:-15px}
 }
 
 /* ================================================ 3. toque com tela grande */
@@ -415,12 +459,10 @@ dialog input{border-color:#e0d1c2}
     height:calc(100% - 16px)!important;min-width:0;min-height:0;border-radius:16px}
   .window-titlebar{cursor:default}
   .window-resize{display:none}
-  .window-controls button{width:20px;height:20px;position:relative}
-  .window-controls button:after{content:'';position:absolute;inset:-14px}
   .window-controls{gap:16px}
   .window-content{padding:20px 22px 28px}
-  #windows{inset:48px 0 72px}
-  #desktop{inset:48px 0 78px;padding:26px 24px 40px}
+  #windows{inset:48px 0 calc(72px + env(safe-area-inset-bottom))}
+  #desktop{inset:48px 0 calc(78px + env(safe-area-inset-bottom));padding:26px 24px 40px}
   .desktop-greeting{position:static;margin-bottom:20px}
   .desktop-shortcuts{position:static;display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:18px 10px;margin:0 0 26px}
   .desktop-shortcuts .app-button{width:auto}
@@ -440,7 +482,7 @@ dialog input{border-color:#e0d1c2}
     border-radius:0;border-left:0;border-right:0;border-bottom:0;padding:4px 4px 4px;
     background:#2b1d24e8;backdrop-filter:blur(24px);box-shadow:0 -6px 24px #0000002e}
   .dock [data-app="inicio"],.dock [data-app="agenda"],.dock [data-app="avisos"],
-  .dock [data-app="documentos"],.dock [data-app="viagens"],
+  .dock [data-app="documentos"],.dock [data-app="viagens"],.dock [data-app="comida"],
   .dock [data-app="ajustes"],.dock-divider{display:none}
   .dock .app-button{flex:1;width:auto;min-width:0;height:58px;justify-content:center;gap:3px;
     transform:none!important;padding:0 2px}
@@ -479,13 +521,10 @@ dialog input{border-color:#e0d1c2}
   .casa-conta-tile{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
   .casa-conta-tile strong{margin-top:0}
   .casa-conta-tile small{flex-basis:100%;margin-top:0}
-  #desktop{inset:48px 0 72px}
-  #windows{inset:48px 0 70px}
+  #desktop{inset:48px 0 calc(72px + env(safe-area-inset-bottom))}
+  #windows{inset:48px 0 calc(70px + env(safe-area-inset-bottom))}
 
-  /* botões da janela: visual pequeno, alvo de 48 */
   .window-controls{gap:16px}
-  .window-controls button{width:18px;height:18px;position:relative}
-  .window-controls button:after{content:'';position:absolute;inset:-15px}
 
   /* atalhos da tela inicial */
   .desktop-shortcuts{gap:18px 6px}
@@ -545,4 +584,14 @@ dialog input{border-color:#e0d1c2}
   .casa-numero{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
   .casa-numero strong{margin-top:0}
   .casa-numero small{flex-basis:100%;margin-top:2px}
+}
+
+/* --- Ajuste pedido pela família (20/09): no celular e no tablet a janela já
+   ocupa a tela inteira, então minimizar e maximizar não significam nada.
+   Fica só fechar, com alvo de toque generoso. --- */
+@media(max-width:1180px){
+  .win-min,.win-max{display:none}
+  .window-controls .win-close{width:32px;height:32px;display:grid;place-items:center;
+    font-size:20px;line-height:1}
+  .window-controls .win-close:after{content:'';position:absolute;inset:-10px}
 }

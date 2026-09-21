@@ -62,7 +62,7 @@ function bolha(m){
     ${m.nota?`<p class="casa-bolha-nota">${svg('lock')}<span>${esc(m.nota)}</span></p>`:''}
     ${m.cartao?`
       <div class="casa-registro">
-        <span class="casa-registro-icone ${esc(m.cartao.tipo)}" aria-hidden="true">${svg(m.cartao.tipo==='compras'?'cart':'tasks')}</span>
+        <span class="casa-registro-icone ${esc(m.cartao.tipo)}" aria-hidden="true">${svg(m.cartao.tipo==='compras'?'cart':m.cartao.tipo==='comida'?'prato':'tasks')}</span>
         <div><b>${esc(m.cartao.titulo)}</b><span>${esc(m.cartao.detalhe)}</span></div>
         <span class="casa-registro-ok">${svg('check')}registrado</span>
       </div>`:''}
@@ -130,12 +130,31 @@ function aplicarAcao(acao,textoDigitado){
     notify(`${nome} entrou na lista de compras.`);
     return {tipo:'compras',titulo:nome,detalhe:'entrou em '+dadosExemplo.listaAtiva.nome};
   }
+  if(tipo==='janta'){
+    registrarJanta(resto,'fora');
+    notify(`Janta de hoje: ${resto}.`);
+  }
+  if(tipo==='auto-comida'){
+    // "hoje a janta é pizza" — tira o prato da frase e anota.
+    const prato = pratoDaFrase(textoDigitado);
+    registrarJanta(prato,'casa');
+    notify(`Janta de hoje: ${prato}.`);
+    return {tipo:'comida',titulo:prato,detalhe:'janta de hoje'};
+  }
   if(tipo==='auto-tarefa'){
     const titulo = textoDigitado.charAt(0).toLocaleUpperCase('pt-BR')+textoDigitado.slice(1);
     registrarTarefa(titulo,'sem prazo');
     notify('Tarefa criada.');
     return {tipo:'tarefa',titulo,detalhe:'sem prazo · sem responsável'};
   }
+}
+// "hoje a janta é pizza" -> "Pizza". Tira as palavras de ligação e sobra o
+// prato. Nada de \b no regex: "é" não é caractere de palavra e a borda falha.
+function pratoDaFrase(frase){
+  const ligacao = /^(a|o|as|os|um|uma|de|da|do|no|na|em|pra|para|é|eh|e|vai|ser|foi|tem|serve|fazer|comer|hoje|amanhã|amanha|janta|jantar|almoço|almoco|comida|jantei|almocei|vamos)$/i;
+  const palavras = String(frase).replace(/[.,!?]/g,' ').trim().split(/\s+/).filter(p=>p&&!ligacao.test(p));
+  const nome = palavras.join(' ') || 'Comida';
+  return nome.charAt(0).toLocaleUpperCase('pt-BR')+nome.slice(1);
 }
 function palavraItem(frase){
   const palavras = String(frase).replace(/[.,!?]/g,'').split(/\s+/).filter(p=>p.length>3);
