@@ -422,8 +422,9 @@ dialog input{border-color:#e0d1c2}
   .casa-linha-abrir{min-height:50px;display:flex;flex-direction:column;justify-content:center}
   .casa-botao-min{min-height:50px;min-width:50px;justify-content:center}
   .link-button,.casa-ver-mais{min-height:50px;min-width:50px;padding:0 2px}
-  .casa-sugestao,.casa-tabs button,.casa-olho button,.casa-niveis button{min-height:50px}
-  .casa-lancar input,.casa-lancar button{min-height:50px}
+  .casa-sugestao,.casa-tabs button,.casa-olho button,.casa-niveis button,
+  .casa-estados button{min-height:50px}
+  .casa-lancar input,.casa-lancar button,.casa-prato,.casa-gasto input{min-height:50px}
   .casa-composer input,.casa-composer .small-button{min-height:50px}
   .small-button,.secondary-button{min-height:50px}
   dialog input{min-height:50px}
@@ -446,10 +447,11 @@ dialog input{border-color:#e0d1c2}
      os dois viram ruído e alvo de toque desperdiçado. Fica só fechar, com
      um alvo bem maior que 48px e o × sempre visível — em toque não existe
      o "passar o mouse" que revelava o símbolo.                            */
-  .win-min,.win-max{display:none}
-  .win-close{width:30px;height:30px;position:relative;font-size:19px;font-weight:600}
-  .win-close span{opacity:.85!important}
-  .win-close:after{content:'';position:absolute;inset:-15px}
+  /* especificidade acima de `.window-controls button` do desktop.css */
+  .window-controls .win-min,.window-controls .win-max{display:none}
+  .window-controls .win-close{width:32px;height:32px;position:relative;font-size:19px;font-weight:600}
+  .window-controls .win-close span{opacity:.9!important}
+  .window-controls .win-close:after{content:'';position:absolute;inset:-14px}
 }
 
 /* ================================================ 3. toque com tela grande */
@@ -471,7 +473,6 @@ dialog input{border-color:#e0d1c2}
   .widget-head{cursor:default}
   .widget-handle{display:none}
   .customize{position:static;margin-top:18px}
-  .casa-fab{bottom:88px}
 }
 
 /* barra de abas embaixo, com ícone E rótulo: vale para celular e tablet.

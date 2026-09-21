@@ -23,7 +23,7 @@ Quem decide o número de colunas é a **largura da janela**, não a da tela. Por
 o celular, girar o tablet ou redimensionar a janela reorganiza tudo sozinho **sem perder
 o que estava aberto** — se você estava vendo uma tarefa, continua vendo aquela tarefa.
 
-## As nove telas
+## As dez telas
 
 | Tela | O que mostra |
 |---|---|
@@ -33,6 +33,7 @@ o que estava aberto** — se você estava vendo uma tarefa, continua vendo aquel
 | **Compras e despensa** | Lista ativa (marca e desmarca), listas reutilizáveis ("mercado do mês") e a despensa com o que está em falta |
 | **Agenda** | A semana com compromissos e tarefas com prazo na mesma lista |
 | **Avisos** | Avisos ligados a um registro — sem chat geral |
+| **Comida** | Almoço e janta de cada dia, em três estados de um toque: **em casa**, **fora** ou **sobra**. Dia em branco é normal e não cobra ninguém. Prato em casa avisa se falta ingrediente, com um toque para jogar na lista; "fora" oferece lançar o gasto, sem obrigar |
 | **Documentos** | Busca no topo, porque ninguém navega pasta. Contratos, notas, fotos e garantias, com tipo, dono e data. **Validade é o ponto**: seguro do carro e garantia da geladeira aparecem com o prazo e geram aviso sozinhos |
 | **Viagens** | A viagem tem dois momentos do mesmo conteúdo: **planejando** (lugares que alguém quis, marcados como vamos/talvez) e **acontecendo** (o que foi combinado virou roteiro por dia, e cada item lembra de quem foi a ideia). Tem convidado externo com acesso só àquela viagem |
 | **Assistente** | O agente da família: responde, registra pelo texto e avisa sem ser chamado |
@@ -70,9 +71,31 @@ assistente, todos comentados em português. Salve e recarregue a página.
 - mandar ele apagar algo, e ver que ele pergunta antes;
 - **procurar um documento** por parte do nome, pelo tipo ou por quem guardou;
 - **abrir a viagem que está acontecendo** e ver o roteiro do dia dizendo de quem veio cada ideia;
-- na viagem em planejamento, tocar num lugar para alternar entre vamos / talvez / fica para a próxima.
+- na viagem em planejamento, tocar num lugar para alternar entre vamos / talvez / fica para a próxima;
+- **anotar o que teve de janta hoje** — ou deixar em branco, que também é resposta;
+- escrever para o assistente "hoje a janta é lasanha" e ver aparecer na tela de Comida.
 
 Recarregar a página devolve tudo ao começo.
+
+## Por que "Comida", e não "cardápio"
+
+A palavra veio do teste: *"cardápio é de casa de pessoas ricas"*. Não é sobre dinheiro, é
+sobre a palavra — cardápio é de restaurante, e em casa o que existe é "o que vai ter pra
+janta?". O app se chama **Comida** e os rótulos são **Almoço** e **Janta**.
+
+## O botão de adicionar não cobre a lista
+
+O botão flutuante é `sticky`, não `fixed`: ele ocupa lugar de verdade no fim do conteúdo,
+então com lista curta fica **abaixo** do último item, e rolando ele gruda perto do fim da
+tela. Some com `env(safe-area-inset-bottom)` para o gesto de home. Subir o botão para o
+topo resolveria a sobreposição e criaria outro problema: o topo está fora do alcance do
+polegar.
+
+## No toque, só fechar
+
+Janela que já ocupa a tela toda não tem o que minimizar nem maximizar. No celular **e no
+tablet** fica só o botão de fechar, com alvo de 60px e o × sempre visível — em toque não
+existe o "passar o mouse" que revelava o símbolo. No computador os três continuam.
 
 ## O tom da tela de Dinheiro
 
@@ -94,7 +117,7 @@ e isso está escrito na tela, não escondido.
 | `casa-preview.html` | A página. Carrega os scripts nesta ordem, que importa |
 | `dados-exemplo.js` | **Todo** o conteúdo fictício. É onde se mexe |
 | `desktop.js` / `desktop.css` | A base do Layout Operacional: janelas, dock, cartões |
-| `casa-apps.js` | Oito das nove telas |
+| `casa-apps.js` | Nove das dez telas |
 | `assistente.js` | A tela do agente |
 | `casa.css` | Cores de casa e os alvos de toque do celular |
 | `account.js` / `account.css` | Entrada e perfil, vindos da base |
